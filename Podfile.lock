@@ -1,10 +1,23 @@
 PODS:
+  - CryptoSwift (0.0.12)
   - ProtocolBuffers-Swift (2.0)
 
 DEPENDENCIES:
+  - CryptoSwift (from `https://github.com/krzyzanowskim/CryptoSwift`, branch `swift20`)
   - ProtocolBuffers-Swift
 
+EXTERNAL SOURCES:
+  CryptoSwift:
+    :branch: swift20
+    :git: https://github.com/krzyzanowskim/CryptoSwift
+
+CHECKOUT OPTIONS:
+  CryptoSwift:
+    :commit: ad4db3095a9ccc034c1eb65934a89c670012e6a0
+    :git: https://github.com/krzyzanowskim/CryptoSwift
+
 SPEC CHECKSUMS:
+  CryptoSwift: 16f1b5a768057636275b76d1c43231c2abba9e80
   ProtocolBuffers-Swift: cf3b2c2ee00cd89374612d58d6043f409a798b3f
 
 COCOAPODS: 0.38.2
