@@ -20,12 +20,40 @@
 
 // @author: Ignacio Corderi
 
-#import <Cocoa/Cocoa.h>
+public class GetCommand : ChannelCommand {
+    
+    public typealias ResponseType = ValueResponse
+    
+    public let key: NSData
+    
+    public init(key: NSData) {
+        self.key = key
+    }
+    
+    public convenience init(key: String) {
+        self.init(key: key.toNSData())
+    }
+    
+    public func build(builder: Builder) -> Builder {
+        builder.header.messageType = .Get
+        builder.keyValue.key = self.key
+        return builder
+    }
+    
+}
 
-//! Project version number for Kinetic.
-FOUNDATION_EXPORT double KineticVersionNumber;
+extension GetCommand: CustomStringConvertible {
+    public var description: String {
+        get {
+            return "Get (key: \(self.key.toUtf8()))"
+        }
+    }
+}
 
-//! Project version string for Kinetic.
-FOUNDATION_EXPORT const unsigned char KineticVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <Kinetic/PublicHeader.h>
+public extension SynchornousChannel {
+    func get(key: String) throws -> GetCommand.ResponseType {
+        let cmd = GetCommand(key: key)
+        return try cmd.sendTo(self)
+    }
+}

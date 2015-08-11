@@ -20,12 +20,43 @@
 
 // @author: Ignacio Corderi
 
-#import <Cocoa/Cocoa.h>
+public class PutCommand : ChannelCommand {
+    
+    public typealias ResponseType = EmptyResponse
+    
+    public let key: NSData
+    public let value: Bytes
+    
+    public init(key: NSData, value: Bytes) {
+        self.key = key
+        self.value = value
+    }
+    
+    public convenience init(key: String, value: String) {
+        self.init(key: key.toNSData(),
+                  value: value.toUtf8())
+    }
+    
+    public func build(builder: Builder) -> Builder {
+        builder.header.messageType = .Put
+        builder.keyValue.key = self.key
+        builder.value = value
+        return builder
+    }
+    
+}
 
-//! Project version number for Kinetic.
-FOUNDATION_EXPORT double KineticVersionNumber;
+extension PutCommand: CustomStringConvertible {
+    public var description: String {
+        get {
+            return "Put (key: \(self.key.toUtf8()), length: \(self.value.count))"
+        }
+    }
+}
 
-//! Project version string for Kinetic.
-FOUNDATION_EXPORT const unsigned char KineticVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <Kinetic/PublicHeader.h>
+public extension SynchornousChannel {
+    func put(key: String, value: String) throws -> PutCommand.ResponseType {
+        let cmd = PutCommand(key: key, value: value)
+        return try cmd.sendTo(self)
+    }
+}
