@@ -90,7 +90,7 @@ extension KineticDevice: CustomStringConvertible {
 extension KineticSession: CustomStringConvertible {
     public var description: String {
         if self.connected {
-            return "Session with \(self.device!)"            
+            return "Session \(self.connectionId!) with \(self.device!)"
         } else {
             return "Session not connected"
         }
