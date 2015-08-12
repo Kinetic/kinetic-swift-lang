@@ -40,6 +40,9 @@ public class PutCommand : ChannelCommand {
     public func build(builder: Builder) -> Builder {
         builder.header.messageType = .Put
         builder.keyValue.key = self.key
+        builder.keyValue.synchronization = .Writeback
+        builder.keyValue.tag = "1337".toNSData()
+        builder.keyValue.algorithm = .Sha1
         builder.value = value
         return builder
     }
