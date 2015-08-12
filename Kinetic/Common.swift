@@ -20,12 +20,12 @@
 
 // @author: Ignacio Corderi
 
-public struct EmptyResponse : ChannelResponse {
+public struct NoResponse : ChannelResponse {
     public let success: Bool
     public let error: KineticRemoteError?
     
-    public static func parse(raw: RawResponse) -> EmptyResponse {
-        return EmptyResponse(success: raw.command.status.code == .Success,
+    public static func parse(raw: RawResponse) -> NoResponse {
+        return NoResponse(success: raw.command.status.code == .Success,
             error: KineticRemoteError.fromStatus(raw.command.status))
     }
 }
@@ -34,17 +34,20 @@ public struct ValueResponse : ChannelResponse {
     public let success: Bool
     public let error: KineticRemoteError?
     public let value: Bytes?
-    
-    public var hasValue: Bool { return value != nil }
+    public let exists: Bool
+    public var hasValue: Bool { return value != nil && value!.count > 0 }
     
     public static func parse(raw: RawResponse) -> ValueResponse {
         switch raw.command.status.code {
-        case .Success, .NotFound:
-            return ValueResponse(success: true, error: nil, value: raw.value)
+        case .Success:
+            return ValueResponse(success: true, error: nil, value: raw.value, exists: true)
+        case .NotFound:
+            return ValueResponse(success: true, error: nil, value: nil, exists: false)
         default:
-            return ValueResponse( success: false,
+            return ValueResponse(success: false,
             error: KineticRemoteError.fromStatus(raw.command.status),
-            value: raw.value)
+            value: raw.value,
+            exists: false)
         }
     }
     
@@ -56,8 +59,10 @@ public struct ValueResponse : ChannelResponse {
                 } else {
                     return "Success (Empty)"
                 }
+            } else if self.error!.message.isEmpty {
+                return "\(self.error!.code)"
             } else {
-                return "\(self.error?.code): \(self.error?.message)"
+                return "\(self.error!.code): \(self.error!.message)"
             }
         }
     }

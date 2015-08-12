@@ -83,8 +83,10 @@ public extension ChannelResponse {
         get {
             if self.success {
                 return "Success"
+            } else if self.error!.message.isEmpty {
+                return "\(self.error!.code)"
             } else {
-                return "\(self.error?.code): \(self.error?.message)"
+                return "\(self.error!.code): \(self.error!.message)"
             }
         }
     }

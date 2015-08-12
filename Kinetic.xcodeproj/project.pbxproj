@@ -18,6 +18,7 @@
 		3EFB7F221B7A7A8000988886 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F211B7A7A7F00988886 /* Utils.swift */; };
 		3EFB7F251B7A977500988886 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F241B7A977500988886 /* Common.swift */; };
 		3EFB7F271B7AA45A00988886 /* Get.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F261B7AA45A00988886 /* Get.swift */; };
+		3EFB7F291B7AB06800988886 /* Delete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F281B7AB06800988886 /* Delete.swift */; };
 		921636AE408C3549DE7A1141 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 382D1C00FC0EC4F1BF676411 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
@@ -48,6 +49,7 @@
 		3EFB7F211B7A7A7F00988886 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		3EFB7F241B7A977500988886 /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		3EFB7F261B7AA45A00988886 /* Get.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Get.swift; sourceTree = "<group>"; };
+		3EFB7F281B7AB06800988886 /* Delete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Delete.swift; sourceTree = "<group>"; };
 		80777030020DBD5A301CA196 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		FB4A7FCA365ECAF75E20A4A9 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -131,6 +133,7 @@
 				3EFB7F241B7A977500988886 /* Common.swift */,
 				3EFB7F1D1B7A6A9800988886 /* Put.swift */,
 				3EFB7F261B7AA45A00988886 /* Get.swift */,
+				3EFB7F281B7AB06800988886 /* Delete.swift */,
 			);
 			name = Commands;
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 				3EFB7F1C1B7A55D100988886 /* Core.swift in Sources */,
 				3EFB7F201B7A6C3300988886 /* Errors.swift in Sources */,
 				3EFB7F1E1B7A6A9800988886 /* Put.swift in Sources */,
+				3EFB7F291B7AB06800988886 /* Delete.swift in Sources */,
 				3EDAAB581B66D47200F30808 /* Client.swift in Sources */,
 				3EFB7F271B7AA45A00988886 /* Get.swift in Sources */,
 				3E07EA7F1B78E3B500DAB3F1 /* Kinetic.proto.swift in Sources */,
