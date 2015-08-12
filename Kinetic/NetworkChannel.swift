@@ -85,3 +85,22 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel, StreamChan
         return RawResponse(message: msg, command: cmd, value: value)
     }
 }
+
+extension NetworkChannel: CustomReflectable {
+    public func customMirror() -> Mirror {
+        if self.error != nil {
+            return Mirror(self, children: [
+                "host" : self.host,
+                "port" : self.port,
+                "connected" : self.connected,
+                "error": self.error!,
+                ])
+        } else {
+            return Mirror(self, children: [
+                "host" : self.host,
+                "port" : self.port,
+                "connected" : self.connected,
+                ])
+        }
+    }
+}

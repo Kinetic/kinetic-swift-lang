@@ -98,3 +98,29 @@ extension KineticSession: CustomStringConvertible {
         }
     }
 }
+
+extension KineticDevice: CustomReflectable {
+    public func customMirror() -> Mirror {
+        return Mirror(self.wwn, children: [
+            "wwn" : self.wwn,
+            "cluster version" : self.clusterVersion,
+            ])
+    }
+}
+
+extension KineticSession: CustomReflectable {
+    public func customMirror() -> Mirror {
+        if self.connected {
+            return Mirror(self, children: [
+                "id" : self.connectionId!,
+                "sequence" : self.sequence, 
+                "device" : self.device!,
+                "channel" : self.channel,
+                ])
+        } else {
+            return Mirror(self, children: [
+                "id" : self.connectionId,
+                ])
+        }
+    }
+}
