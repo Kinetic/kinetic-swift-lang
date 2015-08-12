@@ -58,6 +58,17 @@ public class KineticSession {
         self.sequence = 0
     }
     
+    /// Sends a command to the target device and waits for a response
+    ///
+    /// The type of the result is determined by the command being sent.
+    ///
+    /// Example:
+    /// ```swift
+    /// let response = try session.send(cmd)
+    /// ```
+    ///
+    /// - Parameter cmd: The command that will be sent.
+    /// - Returns: The response from the device.
     public func send<C: ChannelCommand>(cmd: C) throws -> C.ResponseType {
         // Prepare command contents
         let builder = cmd.build(Builder())
