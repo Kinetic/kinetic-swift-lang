@@ -152,7 +152,7 @@
 				3EFB7F261B7AA45A00988886 /* Get.swift */,
 				3EFB7F281B7AB06800988886 /* Delete.swift */,
 			);
-			name = Commands;
+			path = Commands;
 			sourceTree = "<group>";
 		};
 		851E710153FE57DC96E4723A /* Pods */ = {
