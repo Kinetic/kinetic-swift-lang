@@ -38,6 +38,7 @@
 /* Begin PBXFileReference section */
 		382D1C00FC0EC4F1BF676411 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E07EA7E1B78E3B500DAB3F1 /* Kinetic.proto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kinetic.proto.swift; sourceTree = "<group>"; };
+		3E0F7DDD1B7BDD3600F8213F /* Tutorial.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Tutorial.playground; sourceTree = "<group>"; };
 		3EDAAB3D1B66D32D00F30808 /* Kinetic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kinetic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EDAAB401B66D32D00F30808 /* Kinetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Kinetic.h; sourceTree = "<group>"; };
 		3EDAAB421B66D32D00F30808 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -45,7 +46,6 @@
 		3EDAAB4C1B66D32D00F30808 /* KineticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KineticTests.swift; sourceTree = "<group>"; };
 		3EDAAB4E1B66D32D00F30808 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3EDAAB571B66D47200F30808 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
-		3EFB7F121B78EE0900988886 /* KineticPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = KineticPlayground.playground; path = "../../../../Library/Autosave Information/KineticPlayground.playground"; sourceTree = "<group>"; };
 		3EFB7F1B1B7A55D100988886 /* Core.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
 		3EFB7F1D1B7A6A9800988886 /* Put.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Put.swift; sourceTree = "<group>"; };
 		3EFB7F1F1B7A6C3300988886 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
@@ -91,7 +91,7 @@
 		3EDAAB331B66D32D00F30808 = {
 			isa = PBXGroup;
 			children = (
-				3EFB7F121B78EE0900988886 /* KineticPlayground.playground */,
+				3E0F7DDD1B7BDD3600F8213F /* Tutorial.playground */,
 				3EDAAB3F1B66D32D00F30808 /* Kinetic */,
 				3EDAAB4B1B66D32D00F30808 /* KineticTests */,
 				3EDAAB3E1B66D32D00F30808 /* Products */,
