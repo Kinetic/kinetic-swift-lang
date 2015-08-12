@@ -20,6 +20,7 @@
 
 // @author: Ignacio Corderi
 
+/// Contains information about a kinetic device
 public struct KineticDevice {
     internal let handshake: Command
     
@@ -34,6 +35,7 @@ public struct KineticDevice {
     }
 }
 
+/// Represents a session against a kinetic device
 public class KineticSession {
     
     public var device: KineticDevice?
