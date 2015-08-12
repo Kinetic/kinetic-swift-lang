@@ -85,7 +85,7 @@ extension DeleteCommand: CustomStringConvertible {
     }
 }
 
-public extension SynchornousChannel {
+public extension KineticSession {
     func delete(key: String) throws -> DeleteCommand.ResponseType {
         let cmd = DeleteCommand(key: key)
         return try cmd.sendTo(self)

@@ -23,7 +23,6 @@
 typealias Message = Com.Seagate.Kinetic.Proto.Message_
 typealias Command = Com.Seagate.Kinetic.Proto.Command
 
-
 public class Builder {
     var message: Message.Builder
     var command: Command.Builder
@@ -66,8 +65,8 @@ public protocol ChannelCommand {
 }
 
 public extension ChannelCommand {
-    func sendTo(channel: SynchornousChannel) throws -> Self.ResponseType {
-        return try channel.send(self)
+    func sendTo(session: KineticSession) throws -> Self.ResponseType {
+        return try session.send(self)
     }
 }
 
@@ -90,8 +89,4 @@ public extension ChannelResponse {
             }
         }
     }
-}
-
-public protocol SynchornousChannel {
-    func send<C: ChannelCommand>(cmd: C) throws -> C.ResponseType
 }

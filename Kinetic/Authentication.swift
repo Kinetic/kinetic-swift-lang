@@ -20,46 +20,26 @@
 
 // @author: Ignacio Corderi
 
-public class PutCommand : ChannelCommand {
+public protocol AuthenticationCredential {
     
-    public typealias ResponseType = EmptyResponse
-    
-    public let key: NSData
-    public let value: Bytes
-    
-    public init(key: NSData, value: Bytes) {
-        self.key = key
-        self.value = value
-    }
-    
-    public convenience init(key: String, value: String) {
-        self.init(key: key.toNSData(),
-                  value: value.toUtf8())
-    }
-    
-    public func build(builder: Builder) -> Builder {
-        builder.header.messageType = .Put
-        builder.keyValue.key = self.key
-        builder.keyValue.synchronization = .Writeback
-        builder.keyValue.tag = "1337".toNSData()
-        builder.keyValue.algorithm = .Sha1
-        builder.value = value
-        return builder
-    }
+    func authenticate(builder: Builder)
     
 }
 
-extension PutCommand: CustomStringConvertible {
-    public var description: String {
-        get {
-            return "Put (key: \(self.key.toUtf8()), length: \(self.value.count))"
-        }
-    }
-}
+public struct HmacCredential: AuthenticationCredential  {
+    public let identity: Int64
+    public let key: String
 
-public extension KineticSession {
-    func put(key: String, value: String) throws -> PutCommand.ResponseType {
-        let cmd = PutCommand(key: key, value: value)
-        return try cmd.sendTo(self)
+    public static func defaultCredentials() -> HmacCredential {
+        return HmacCredential(identity: 1, key: "asdfasdf")
+    }
+    
+    public func authenticate(builder: Builder) {
+        let m = builder.message
+        m.authType = .Hmacauth
+        
+        let a = m.getHmacAuthBuilder()
+        a.identity = self.identity
+        a.hmac = m.commandBytes.hmacSha1(self.key)
     }
 }

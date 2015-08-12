@@ -51,7 +51,7 @@ extension GetCommand: CustomStringConvertible {
 }
 
 
-public extension SynchornousChannel {
+public extension KineticSession {
     func get(key: String) throws -> GetCommand.ResponseType {
         let cmd = GetCommand(key: key)
         return try cmd.sendTo(self)

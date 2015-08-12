@@ -20,69 +20,23 @@
 
 // @author: Ignacio Corderi
 
-import Foundation
-import CryptoSwift
-
-public func connect(host:String, port:Int) throws -> Client {
-    let c = Client(host: host, port: port)
-    try c.connect()
-    return c
+public protocol KineticChannel {
+    var error: ErrorType? { get }
+    var connected: Bool { get }
+    func connect() -> KineticSession
+    func send(builder: Builder) throws
+    func receive() throws -> RawResponse
+    func close()
 }
 
-public class Client : CustomStringConvertible, SynchornousChannel {
+protocol StreamChannel {
+    var inp: NSInputStream? { get set }
+    var out: NSOutputStream? { get set }
+}
+
+extension StreamChannel {        
     
-    public let host: String
-    public let port: Int
-    
-    public let identity: Int64 = 1
-    public let key = "asdfasdf"
-    
-    var inp: NSInputStream?
-    var out: NSOutputStream?
-    
-    var handshake: Command?
-    
-    // Session information
-    var sequenceId: Int64 = 0
-    
-    public var connectionId: Int64 {
-        return handshake!.header.connectionId
-    }
-    
-    var clusterVersion: Int64 {
-        return handshake!.header.clusterVersion
-    }
-    
-    // Device information
-    public var wwn: String {
-        let config = handshake!.body.getLog.configuration
-        return NSString(data: config.worldWideName, encoding:NSUTF8StringEncoding)!.description
-    }
-    
-    // CustomStringConvertible (a.k.a toString)
-    public var description: String {
-        get {
-            return "Connected to \(wwn)"
-        }
-    }
-    
-    init(host:String, port:Int) {
-        self.host = host
-        self.port = port
-    }
-    
-    func connect() throws {
-        NSStream.getStreamsToHostWithName(self.host, port: self.port, inputStream: &self.inp, outputStream: &self.out)
-        
-        self.inp!.open()
-        self.out!.open()
-        
-        let (msg, _) = try self.rawReceive()
-        
-        self.handshake = try Command.parseFromData(msg.commandBytes)
-    }
-    
-    private func rawSend(proto: NSData, value: Bytes?) throws {
+    func rawSend(proto: NSData, value: Bytes?) throws {
         // Prepare 9 bytes header
         // 1 byte - magic number | 4 bytes - proto length | 4 bytes - value length
         var headerBuffer = Bytes(count: 9, repeatedValue: 0)
@@ -104,7 +58,7 @@ public class Client : CustomStringConvertible, SynchornousChannel {
         }
     }
     
-    private func rawReceive() throws -> (Message, Bytes) {
+    func rawReceive() throws -> (Message, Bytes) {
         let inputStream = self.inp!
         
         var headerBuffer = Bytes(count:9, repeatedValue: 0)
@@ -125,7 +79,7 @@ public class Client : CustomStringConvertible, SynchornousChannel {
         
         let proto = NSData(bytes: &protoBuffer, length: protoLength)
         let msg = try Message.parseFromData(proto)
-        // TODO: verify HMAC 
+        // TODO: verify HMAC
         
         if valueLength > 0 {
             var value = Bytes(count:valueLength, repeatedValue: 0)
@@ -137,42 +91,5 @@ public class Client : CustomStringConvertible, SynchornousChannel {
             return (msg, [])
         }
     }
-    
-    public func send<C: ChannelCommand>(cmd: C) throws -> C.ResponseType {
-        // Prepare command contents
-        let builder = cmd.build(Builder())
-        
-        // Prepare header
-        let h = builder.header
-        h.clusterVersion = self.clusterVersion
-        h.connectionId = self.clusterVersion
-        h.sequence = self.clusterVersion
-        
-        let m = builder.message
-        
-        // Build command proto
-        let cmdProto = try builder.command.build()
-        print(cmdProto) // TODO: Remove this line
-        m.commandBytes = cmdProto.data()
-        
-        // Prepare authentication
-        let a = m.getHmacAuthBuilder()
-        a.identity = self.identity
-        a.hmac = m.commandBytes.hmacSha1(self.key)
-        m.authType = .Hmacauth
-        
-        // Build message proto
-        let msgProto = try m.build()
-        
-        // Send & Receive
-        try self.rawSend(msgProto.data(), value: builder.value)
-        let (respMsg, respValue) = try self.rawReceive()
-        
-        // Unwrap command
-        let respCmd = try Command.parseFromData(respMsg.commandBytes)
-        
-        let r = RawResponse(message: respMsg, command: respCmd, value: respValue)
-        return C.ResponseType.parse(r)
-    }
-    
 }
+

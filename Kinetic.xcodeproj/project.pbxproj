@@ -11,7 +11,7 @@
 		3EDAAB411B66D32D00F30808 /* Kinetic.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EDAAB401B66D32D00F30808 /* Kinetic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EDAAB481B66D32D00F30808 /* Kinetic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EDAAB3D1B66D32D00F30808 /* Kinetic.framework */; };
 		3EDAAB4D1B66D32D00F30808 /* KineticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDAAB4C1B66D32D00F30808 /* KineticTests.swift */; };
-		3EDAAB581B66D47200F30808 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDAAB571B66D47200F30808 /* Client.swift */; };
+		3EDAAB581B66D47200F30808 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDAAB571B66D47200F30808 /* Session.swift */; };
 		3EFB7F1C1B7A55D100988886 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F1B1B7A55D100988886 /* Core.swift */; };
 		3EFB7F1E1B7A6A9800988886 /* Put.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F1D1B7A6A9800988886 /* Put.swift */; };
 		3EFB7F201B7A6C3300988886 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F1F1B7A6C3300988886 /* Errors.swift */; };
@@ -19,6 +19,9 @@
 		3EFB7F251B7A977500988886 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F241B7A977500988886 /* Common.swift */; };
 		3EFB7F271B7AA45A00988886 /* Get.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F261B7AA45A00988886 /* Get.swift */; };
 		3EFB7F291B7AB06800988886 /* Delete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F281B7AB06800988886 /* Delete.swift */; };
+		3EFB7F2B1B7B963800988886 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F2A1B7B963800988886 /* Channel.swift */; };
+		3EFB7F2D1B7BAF8D00988886 /* NetworkChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F2C1B7BAF8D00988886 /* NetworkChannel.swift */; };
+		3EFB7F2F1B7BB4E700988886 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F2E1B7BB4E700988886 /* Authentication.swift */; };
 		921636AE408C3549DE7A1141 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 382D1C00FC0EC4F1BF676411 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
@@ -41,7 +44,7 @@
 		3EDAAB471B66D32D00F30808 /* KineticTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KineticTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EDAAB4C1B66D32D00F30808 /* KineticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KineticTests.swift; sourceTree = "<group>"; };
 		3EDAAB4E1B66D32D00F30808 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3EDAAB571B66D47200F30808 /* Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		3EDAAB571B66D47200F30808 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		3EFB7F121B78EE0900988886 /* KineticPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = KineticPlayground.playground; path = "../../../../Library/Autosave Information/KineticPlayground.playground"; sourceTree = "<group>"; };
 		3EFB7F1B1B7A55D100988886 /* Core.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
 		3EFB7F1D1B7A6A9800988886 /* Put.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Put.swift; sourceTree = "<group>"; };
@@ -50,6 +53,9 @@
 		3EFB7F241B7A977500988886 /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		3EFB7F261B7AA45A00988886 /* Get.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Get.swift; sourceTree = "<group>"; };
 		3EFB7F281B7AB06800988886 /* Delete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Delete.swift; sourceTree = "<group>"; };
+		3EFB7F2A1B7B963800988886 /* Channel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
+		3EFB7F2C1B7BAF8D00988886 /* NetworkChannel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkChannel.swift; sourceTree = "<group>"; };
+		3EFB7F2E1B7BB4E700988886 /* Authentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
 		80777030020DBD5A301CA196 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		FB4A7FCA365ECAF75E20A4A9 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -110,7 +116,10 @@
 				3EFB7F211B7A7A7F00988886 /* Utils.swift */,
 				3EFB7F1F1B7A6C3300988886 /* Errors.swift */,
 				3EFB7F1B1B7A55D100988886 /* Core.swift */,
-				3EDAAB571B66D47200F30808 /* Client.swift */,
+				3EFB7F2A1B7B963800988886 /* Channel.swift */,
+				3EFB7F2C1B7BAF8D00988886 /* NetworkChannel.swift */,
+				3EFB7F2E1B7BB4E700988886 /* Authentication.swift */,
+				3EDAAB571B66D47200F30808 /* Session.swift */,
 				3EFB7F231B7A951000988886 /* Commands */,
 				3EDAAB401B66D32D00F30808 /* Kinetic.h */,
 				3EDAAB421B66D32D00F30808 /* Info.plist */,
@@ -291,14 +300,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EFB7F1C1B7A55D100988886 /* Core.swift in Sources */,
+				3EFB7F2B1B7B963800988886 /* Channel.swift in Sources */,
 				3EFB7F201B7A6C3300988886 /* Errors.swift in Sources */,
 				3EFB7F1E1B7A6A9800988886 /* Put.swift in Sources */,
 				3EFB7F291B7AB06800988886 /* Delete.swift in Sources */,
-				3EDAAB581B66D47200F30808 /* Client.swift in Sources */,
+				3EFB7F2D1B7BAF8D00988886 /* NetworkChannel.swift in Sources */,
+				3EDAAB581B66D47200F30808 /* Session.swift in Sources */,
 				3EFB7F271B7AA45A00988886 /* Get.swift in Sources */,
 				3E07EA7F1B78E3B500DAB3F1 /* Kinetic.proto.swift in Sources */,
 				3EFB7F221B7A7A8000988886 /* Utils.swift in Sources */,
 				3EFB7F251B7A977500988886 /* Common.swift in Sources */,
+				3EFB7F2F1B7BB4E700988886 /* Authentication.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
