@@ -15,3 +15,6 @@ let x = try c.get("hello")
 //: the actual values are byte arrays `[UInt8]`
 print("Received: \(String.fromUtf8(x.value!))")
 
+//: We are done
+c.close()
+c.connected

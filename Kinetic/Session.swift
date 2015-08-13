@@ -21,7 +21,7 @@
 // @author: Ignacio Corderi
 
 /// Contains information about a kinetic device
-public struct KineticDevice {
+public struct KineticDevice : Equatable {
     internal let handshake: Command
     
     public var clusterVersion: Int64 { return self.handshake.header.clusterVersion }
@@ -35,28 +35,43 @@ public struct KineticDevice {
     }
 }
 
+public func ==(lhs: KineticDevice, rhs: KineticDevice) -> Bool {
+    return lhs.wwn == rhs.wwn
+}
+
 /// Represents a session against a kinetic device
 public class KineticSession {
-    
-    public var device: KineticDevice?
-    public var connectionId: Int64? { return self.device?.handshake.header.connectionId }
-    public var credentials: AuthenticationCredential
     
     var sequence: Int64
     var channel: KineticChannel
     
-    // Surface convenient channel operations
+    public private(set) var device: KineticDevice?
+    public private(set) var credentials: AuthenticationCredential
+    
+    public var connectionId: Int64? { return self.device?.handshake.header.connectionId }
+    
     public var connected: Bool { return self.channel.connected }
+    
     public func close() {
         self.channel.close()
     }
+  
+    public func clone() -> KineticSession {
+        return self.channel.clone()
+    }
     
-    init(channel: KineticChannel, device: KineticDevice?){
-        self.channel = channel
-        self.device = device        
+    internal init(channel: KineticChannel, device: KineticDevice?){
         self.credentials = HmacCredential.defaultCredentials()
         self.sequence = 0
+        self.channel = channel
+        self.device = device
     }
+    
+    internal convenience init(withCredentials channel: KineticChannel, device: KineticDevice?,
+        credentials: AuthenticationCredential){
+            self.init(channel: channel, device: device)
+            self.credentials = credentials
+    }    
     
     /// Sends a command to the target device and waits for a response
     ///
@@ -121,7 +136,7 @@ extension KineticDevice: CustomReflectable {
 
 extension KineticSession: CustomReflectable {
     public func customMirror() -> Mirror {
-        if self.connected {
+        if self.connectionId != nil {
             return Mirror(self, children: [
                 "id" : self.connectionId!,
                 "sequence" : self.sequence, 
@@ -130,7 +145,7 @@ extension KineticSession: CustomReflectable {
                 ])
         } else {
             return Mirror(self, children: [
-                "id" : self.connectionId,
+                "channel" : self.channel,
                 ])
         }
     }

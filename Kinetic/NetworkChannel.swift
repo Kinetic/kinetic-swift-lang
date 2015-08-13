@@ -20,10 +20,7 @@
 
 // @author: Ignacio Corderi
 
-public func connect(host:String, port:Int) -> KineticSession {
-    let c = NetworkChannel(host: host, port: port)
-    return c.connect()
-}
+public let connect = NetworkChannel.connect
 
 public class NetworkChannel: CustomStringConvertible, KineticChannel, StreamChannel {
     
@@ -38,32 +35,40 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel, StreamChan
     public var description: String { return "Channel \(self.host):\(self.port)" }
     
     // KineticChannel
-    public var error: ErrorType? = nil
+    weak public private(set) var session: KineticSession? = nil
+    public private(set) var error: ErrorType? = nil
     public var connected: Bool {
         return self.inp != nil && self.out != nil
     }
     
-    init(host:String, port:Int) {
+    internal init(host:String, port:Int) {
         self.host = host
         self.port = port
     }
     
-    public func connect() -> KineticSession {
-        NSStream.getStreamsToHostWithName(self.host, port: self.port, inputStream: &self.inp, outputStream: &self.out)
+    public static func connect(host: String, port: Int) -> KineticSession {
+        let c = NetworkChannel(host: host, port: port)
+        NSStream.getStreamsToHostWithName(host, port: port, inputStream: &c.inp, outputStream: &c.out)
         
-        self.inp!.open()
-        self.out!.open()
+        c.inp!.open()
+        c.out!.open()
         
+        var device:KineticDevice? = nil
         do {
-            let (msg, _) = try self.rawReceive()
-            
-            let device = KineticDevice(handshake: try Command.parseFromData(msg.commandBytes))
-            return KineticSession(channel: self, device: device)
+            let (msg, _) = try c.rawReceive()
+            device = KineticDevice(handshake: try Command.parseFromData(msg.commandBytes))
         } catch let err {
-            self.error = err
+            c.error = err
         }
         
-        return KineticSession(channel: self, device: nil)
+        let s = KineticSession(channel: c, device: device)
+        c.session = s
+        
+        return s
+    }
+    
+    public func clone() -> KineticSession {
+        return NetworkChannel.connect(self.host, port: self.port)
     }
     
     public func close() {

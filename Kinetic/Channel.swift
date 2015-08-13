@@ -23,9 +23,9 @@
 public protocol KineticChannel {
     var error: ErrorType? { get }
     var connected: Bool { get }
-    func connect() -> KineticSession
     func send(builder: Builder) throws
     func receive() throws -> RawResponse
+    func clone() -> KineticSession
     func close()
 }
 
