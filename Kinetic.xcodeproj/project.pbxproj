@@ -40,6 +40,7 @@
 		382D1C00FC0EC4F1BF676411 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E07EA7E1B78E3B500DAB3F1 /* Kinetic.proto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kinetic.proto.swift; sourceTree = "<group>"; };
 		3ED681EA1B7CEA0600AFDF79 /* Encoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Encoding.swift; sourceTree = "<group>"; };
+		3ED681EE1B7D0EC600AFDF79 /* Example 2 - Async.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = "Example 2 - Async.playground"; sourceTree = "<group>"; };
 		3EDAAB3D1B66D32D00F30808 /* Kinetic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kinetic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EDAAB401B66D32D00F30808 /* Kinetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Kinetic.h; sourceTree = "<group>"; };
 		3EDAAB421B66D32D00F30808 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -143,6 +144,7 @@
 			isa = PBXGroup;
 			children = (
 				3EF4F82D1B7BE11400E4EB73 /* Example 1 - Hello World.playground */,
+				3ED681EE1B7D0EC600AFDF79 /* Example 2 - Async.playground */,
 			);
 			path = examples;
 			sourceTree = "<group>";

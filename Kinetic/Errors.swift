@@ -24,6 +24,10 @@ public enum KineticConnectionErrors: ErrorType {
     case InvalidMagicNumber
 }
 
+public enum PromiseErrors: ErrorType {
+    case SomeError(ErrorType)
+}
+
 public enum StatusCode : Int {
     case InvalidStatusCode = -1
     case NotAttempted = 0

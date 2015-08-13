@@ -1,23 +1,34 @@
 PODS:
+  - BrightFutures (3.0.0-beta.2):
+    - Result (= 0.6-beta.1)
   - CryptoSwift (0.0.12)
   - ProtocolBuffers-Swift (2.0)
+  - Result (0.6-beta.1)
 
 DEPENDENCIES:
+  - BrightFutures (from `https://github.com/Thomvis/BrightFutures`)
   - CryptoSwift (from `https://github.com/krzyzanowskim/CryptoSwift`, branch `swift20`)
   - ProtocolBuffers-Swift
 
 EXTERNAL SOURCES:
+  BrightFutures:
+    :git: https://github.com/Thomvis/BrightFutures
   CryptoSwift:
     :branch: swift20
     :git: https://github.com/krzyzanowskim/CryptoSwift
 
 CHECKOUT OPTIONS:
+  BrightFutures:
+    :commit: d12ca54ef5f353fb1bec2517e8b0bd547ec81a5d
+    :git: https://github.com/Thomvis/BrightFutures
   CryptoSwift:
     :commit: ad4db3095a9ccc034c1eb65934a89c670012e6a0
     :git: https://github.com/krzyzanowskim/CryptoSwift
 
 SPEC CHECKSUMS:
+  BrightFutures: 1f99ca607fd2880a606257c57eb3ebd45299443d
   CryptoSwift: 16f1b5a768057636275b76d1c43231c2abba9e80
   ProtocolBuffers-Swift: cf3b2c2ee00cd89374612d58d6043f409a798b3f
+  Result: 6c990ec4a72470672f9fc5b6fef009da0f6f40d1
 
 COCOAPODS: 0.38.2

@@ -20,6 +20,8 @@
 
 // @author: Ignacio Corderi
 
+import BrightFutures
+
 /// Contains information about a kinetic device
 public struct KineticDevice : Equatable {
     internal let handshake: Command
@@ -71,7 +73,21 @@ public class KineticSession {
         credentials: AuthenticationCredential){
             self.init(channel: channel, device: device)
             self.credentials = credentials
-    }    
+    }
+    
+    public func promise<C: ChannelCommand>(cmd: C) -> Future<C.ResponseType, PromiseErrors> {
+        let promise = Promise<C.ResponseType, PromiseErrors>()
+        
+        Queue.global.async {
+            do {
+                try promise.success(self.send(cmd))
+            } catch let err {
+                promise.tryFailure(.SomeError(err))
+            }
+        }
+        
+        return promise.future
+    }
     
     /// Sends a command to the target device and waits for a response
     ///

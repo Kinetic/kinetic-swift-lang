@@ -52,10 +52,14 @@ code_sign_if_enabled() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework 'Pods/BrightFutures.framework'
   install_framework 'Pods/CryptoSwift.framework'
   install_framework 'Pods/ProtocolBuffers.framework'
+  install_framework 'Pods/Result.framework'
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework 'Pods/BrightFutures.framework'
   install_framework 'Pods/CryptoSwift.framework'
   install_framework 'Pods/ProtocolBuffers.framework'
+  install_framework 'Pods/Result.framework'
 fi
