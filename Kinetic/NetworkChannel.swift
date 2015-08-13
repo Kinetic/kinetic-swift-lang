@@ -22,71 +22,26 @@
 
 public let connect = NetworkChannel.connect
 
-protocol StreamChannel {
-    var inp: NSInputStream? { get set }
-    var out: NSOutputStream? { get set }
-}
-
-extension StreamChannel {
+extension NSInputStream {
     
-    func rawSend(proto: NSData, value: Bytes?) throws {
-        // Prepare 9 bytes header
-        // 1 byte - magic number | 4 bytes - proto length | 4 bytes - value length
-        var headerBuffer = Bytes(count: 9, repeatedValue: 0)
-        headerBuffer[0] = 70 // Magic
-        copyFromUInt32(&headerBuffer, offset: 1, value: UInt32(proto.length))
-        if value != nil {
-            copyFromUInt32(&headerBuffer, offset: 5, value: UInt32(value!.count))
-        }
-        
-        // Send header, proto and value
-        let outputStream = self.out!
-        outputStream.write(headerBuffer, maxLength: headerBuffer.count)
-        var array = Bytes(count: proto.length, repeatedValue: 0)
-        // TODO: make sure this is a non-memcopy operation
-        proto.getBytes(&array, length: proto.length)
-        outputStream.write(array, maxLength: array.count)
-        if value != nil {
-            outputStream.write(value!, maxLength: value!.count)
-        }
+    func read(fully length: Int) -> Bytes {
+        var buffer = Bytes(count:length, repeatedValue: 0)
+        // TODO: loop until you read it all
+        let _ = self.read(&buffer, maxLength: length)
+        return buffer
     }
     
-    func rawReceive() throws -> (Message, Bytes) {
-        let inputStream = self.inp!
-        
-        var headerBuffer = Bytes(count:9, repeatedValue: 0)
-        
-        // TODO: what are the semantics of read in swift? does it read all?
-        let _ = inputStream.read(&headerBuffer, maxLength: headerBuffer.count)
-        
-        if headerBuffer[0] != 70 {
-            throw KineticConnectionErrors.InvalidMagicNumber
-        }
-        
-        let protoLength = Int(bytesToUInt32(headerBuffer, offset: 1))
-        let valueLength = Int(bytesToUInt32(headerBuffer, offset: 5))
-        
-        var protoBuffer = Array<UInt8>(count:protoLength, repeatedValue: 0)
-        // TODO: what are the semantics of read in swift? does it read all?
-        let _ = inputStream.read(&protoBuffer, maxLength: protoBuffer.count)
-        
-        let proto = NSData(bytes: &protoBuffer, length: protoLength)
-        let msg = try Message.parseFromData(proto)
-        // TODO: verify HMAC
-        
-        if valueLength > 0 {
-            var value = Bytes(count:valueLength, repeatedValue: 0)
-            // TODO: what are the semantics of read in swift? does it read all?
-            let _ = inputStream.read(&value, maxLength: value.count)
-            
-            return (msg, value)
-        } else {
-            return (msg, [])
-        }
-    }
 }
 
-public class NetworkChannel: CustomStringConvertible, KineticChannel, StreamChannel {
+extension NSOutputStream {
+    
+    func write(bytes: Bytes) -> Int {
+        return self.write(bytes, maxLength: bytes.count)
+    }
+    
+}
+
+public class NetworkChannel: CustomStringConvertible, KineticChannel {
     
     public let host: String
     public let port: Int
@@ -119,8 +74,8 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel, StreamChan
         
         var device:KineticDevice? = nil
         do {
-            let (msg, _) = try c.rawReceive()
-            device = KineticDevice(handshake: try Command.parseFromData(msg.commandBytes))
+            let r = try c.receive()
+            device = KineticDevice(handshake: r.command)
         } catch let err {
             c.error = err
         }
@@ -143,15 +98,30 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel, StreamChan
     }
     
     public func send(builder: Builder) throws {
-        let msgProto = try builder.message.build()
-        try self.rawSend(msgProto.data(), value: builder.value)
+        let outputStream = self.out!
+        
+        let encoded = try builder.encode()
+        
+        outputStream.write(encoded.header.bytes)
+        outputStream.write(encoded.proto!)
+        if encoded.value != nil {
+            outputStream.write(encoded.value!)
+        }
     }
     
     public func receive() throws -> RawResponse {
-        let (msg, value) = try self.rawReceive()
-        let cmd = try Command.parseFromData(msg.commandBytes)
+        let inputStream = self.inp!
         
-        return RawResponse(message: msg, command: cmd, value: value)
+        let header = KineticEncoding.Header(bytes: inputStream.read(fully: 9))
+        let proto = inputStream.read(fully: header.protoLength)
+        var value: Bytes? = nil
+        if header.valueLength > 0 {
+            value = inputStream.read(fully: header.valueLength)
+        }
+        
+        let encoding = KineticEncoding(header, proto, value)
+        
+        return try encoding.decode()
     }
 }
 

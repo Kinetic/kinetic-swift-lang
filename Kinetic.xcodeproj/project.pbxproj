@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3E07EA7F1B78E3B500DAB3F1 /* Kinetic.proto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E07EA7E1B78E3B500DAB3F1 /* Kinetic.proto.swift */; };
+		3ED681EB1B7CEA0600AFDF79 /* Encoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED681EA1B7CEA0600AFDF79 /* Encoding.swift */; };
 		3EDAAB411B66D32D00F30808 /* Kinetic.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EDAAB401B66D32D00F30808 /* Kinetic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EDAAB481B66D32D00F30808 /* Kinetic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EDAAB3D1B66D32D00F30808 /* Kinetic.framework */; };
 		3EDAAB4D1B66D32D00F30808 /* KineticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDAAB4C1B66D32D00F30808 /* KineticTests.swift */; };
@@ -38,6 +39,7 @@
 /* Begin PBXFileReference section */
 		382D1C00FC0EC4F1BF676411 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E07EA7E1B78E3B500DAB3F1 /* Kinetic.proto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kinetic.proto.swift; sourceTree = "<group>"; };
+		3ED681EA1B7CEA0600AFDF79 /* Encoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Encoding.swift; sourceTree = "<group>"; };
 		3EDAAB3D1B66D32D00F30808 /* Kinetic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kinetic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EDAAB401B66D32D00F30808 /* Kinetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Kinetic.h; sourceTree = "<group>"; };
 		3EDAAB421B66D32D00F30808 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				3EFB7F1F1B7A6C3300988886 /* Errors.swift */,
 				3EFB7F1B1B7A55D100988886 /* Core.swift */,
 				3EFB7F2A1B7B963800988886 /* Channel.swift */,
+				3ED681EA1B7CEA0600AFDF79 /* Encoding.swift */,
 				3EFB7F2C1B7BAF8D00988886 /* NetworkChannel.swift */,
 				3EFB7F2E1B7BB4E700988886 /* Authentication.swift */,
 				3EDAAB571B66D47200F30808 /* Session.swift */,
@@ -311,6 +314,7 @@
 				3EFB7F2B1B7B963800988886 /* Channel.swift in Sources */,
 				3EFB7F201B7A6C3300988886 /* Errors.swift in Sources */,
 				3EFB7F1E1B7A6A9800988886 /* Put.swift in Sources */,
+				3ED681EB1B7CEA0600AFDF79 /* Encoding.swift in Sources */,
 				3EFB7F291B7AB06800988886 /* Delete.swift in Sources */,
 				3EFB7F2D1B7BAF8D00988886 /* NetworkChannel.swift in Sources */,
 				3EDAAB581B66D47200F30808 /* Session.swift in Sources */,

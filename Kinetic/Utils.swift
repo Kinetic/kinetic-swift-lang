@@ -57,6 +57,13 @@ public extension String {
 
 extension NSData {
     
+    public func asBytes() -> Bytes {
+        // TODO: figure out how to do this without copying!
+        var buffer = Bytes(count: self.length, repeatedValue: 0)
+        self.getBytes(&buffer, length: self.length)
+        return buffer
+    }
+    
     public func toUtf8() -> String {
         return NSString(data: self, encoding:NSUTF8StringEncoding)!.description
     }
