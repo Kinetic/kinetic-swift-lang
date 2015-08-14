@@ -20,5 +20,8 @@ future
         print("< closing session >")
         c.close() }
 
+//: You can also force the value
+future.forced(1.0)
+
 //: Allow the background threads to do their work
 XCPSetExecutionShouldContinueIndefinitely()
