@@ -91,6 +91,7 @@ public class KineticSession {
                     print("Oops: please code me...")
                 }
             }
+            print("Session closed, reader going away...")
         }
         
         // We only need the writer queue if connection was ok
@@ -108,14 +109,49 @@ public class KineticSession {
     }
     
     public func promise<C: ChannelCommand>(cmd: C) -> Future<C.ResponseType, PromiseErrors> {
+        // Prepare command contents
+        let builder = cmd.build(Builder())
+        
+        // Prepare header
+        let h = builder.header
+        h.clusterVersion = self.device!.clusterVersion
+        h.connectionId = self.connectionId!
+        h.sequence = ++self.sequence
+        
+        let m = builder.message
+        
+        // Prepare promise
         let promise = Promise<C.ResponseType, PromiseErrors>()
         
-        Queue.global.async {
-            do {
-                try promise.success(self.send(cmd))
-            } catch let err {
-                promise.tryFailure(.SomeError(err))
+        do {
+            // Build command proto
+            let cmdProto = try builder.command.build()
+            m.commandBytes = cmdProto.data()
+            
+            self.credentials.authenticate(builder)
+            
+            
+            self.pending[builder.command.header.sequence] = { r in
+                do {
+                    try promise.success(C.ResponseType.parse(r))
+                } catch {
+                    print("Mmm... when does this happen?")
+                }
+                self.pending[builder.command.header.sequence] = nil
             }
+            
+            // Queue the command to be sent to the target device
+            dispatch_async(self.writerQueue) {
+                do {
+                    print("Sending seq:\(builder.command.header.sequence)")
+                    try self.channel.send(builder)
+                } catch {
+                    // TODO: write me!
+                    print("Sending failed :/ what a bummer")
+                }
+            }
+        } catch {
+            print("More oops! FIX ME")
         }
         
         return promise.future
@@ -132,50 +168,14 @@ public class KineticSession {
     ///
     /// - Parameter cmd: The command that will be sent.
     /// - Returns: The response from the device.
-    public func send<C: ChannelCommand>(cmd: C) throws -> C.ResponseType {
-        // Prepare command contents
-        let builder = cmd.build(Builder())
-        
-        // Prepare header
-        let h = builder.header
-        h.clusterVersion = self.device!.clusterVersion
-        h.connectionId = self.connectionId!
-        h.sequence = ++self.sequence
-        
-        let m = builder.message
-        
-        // Build command proto
-        let cmdProto = try builder.command.build()
-        m.commandBytes = cmdProto.data()
-        
-        self.credentials.authenticate(builder)
-        
-        // Prepare promise
-        let promise = Promise<RawResponse, NoError>()
-        self.pending[builder.command.header.sequence] = { r in
-            do {
-                try promise.success(r)
-            } catch {
-                print("Mmm... when does this happen?")
-            }
-            self.pending[builder.command.header.sequence] = nil
-        }
-        
-        // Send & Receive
-        dispatch_async(self.writerQueue) {
-            do {
-                print("Sending seq:\(builder.command.header.sequence)")
-                try self.channel.send(builder)
-            } catch {
-                // TODO: write me!
-                print("Sending failed :/ what a bummer")
-            }
-        }
-        
-        // TODO: all this !bangs are ugly, what can go wrong?
-        let r = promise.future.forced()!.value!
-        
-        return C.ResponseType.parse(r)
+    public func send<C: ChannelCommand>(cmd: C) -> C.ResponseType {
+        let future = self.promise(cmd)
+        return future.forced()!.value!
+    }
+    
+    public func send<C: ChannelCommand>(cmd: C, timeout:NSTimeInterval) -> C.ResponseType {
+        let future = self.promise(cmd)
+        return future.forced(timeout)!.value!
     }
 
 }
