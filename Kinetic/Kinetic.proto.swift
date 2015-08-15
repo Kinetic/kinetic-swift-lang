@@ -3896,7 +3896,7 @@ internal extension Com.Seagate.Kinetic.Proto {
           internal override func mergeFromCodedInputStream(input:CodedInputStream, extensionRegistry:ExtensionRegistry) throws -> Com.Seagate.Kinetic.Proto.Command.KeyValue.Builder {
             let unknownFieldsBuilder:UnknownFieldSet.Builder = try UnknownFieldSet.builderWithUnknownFields(self.unknownFields)
             while (true) {
-              var tag = try input.readTag()
+              let tag = try input.readTag()
               switch tag {
               case 0: 
                 self.unknownFields = try unknownFieldsBuilder.build()

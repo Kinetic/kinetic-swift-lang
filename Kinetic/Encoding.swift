@@ -39,45 +39,49 @@ public struct KineticEncoding {
             self.bytes = bytes
         }
         
-        public init(protoLength: Int, valueLength: Int?) {
+        public init(protoLength: Int, valueLength: Int) {
             var buffer = Bytes(count: 9, repeatedValue: 0)
             buffer[0] = 70 // Magic
             copyFromUInt32(&buffer, offset: 1, value: UInt32(protoLength))
-            if valueLength != nil {
-                copyFromUInt32(&buffer, offset: 5, value: UInt32(valueLength!))
-            }
+            copyFromUInt32(&buffer, offset: 5, value: UInt32(valueLength))
             self.bytes = buffer
         }
     }
     
     public let header: Header
-    public private(set) var proto: Bytes?
-    public private(set) var value: Bytes?
+    public private(set) var proto: Bytes
+    public private(set) var value: Bytes
     
-    public init(_ header: Header, _ proto: Bytes, _ value: Bytes?) {
+    public init(_ header: Header, _ proto: Bytes, _ value: Bytes) {
         self.header = header
         self.proto = proto
         self.value = value
     }
     
     public static func encode(builder: Builder) throws -> KineticEncoding {
-        let proto = try builder.message.build()
+        let proto = try { try builder.message.build() } >
+            { KineticEncodingErrors.EncodingFailure("Failed to build proto message.", $0) }
+        
         let protoData = proto.data()
-        let header = Header(protoLength: protoData.length, valueLength: builder.value?.count)
+        let header = Header(protoLength: protoData.length, valueLength: builder.value.count)
         
         return KineticEncoding(header, protoData.asBytes(), builder.value)
     }
     
     public func decode() throws -> RawResponse {
         if !self.header.isValid {
-            throw KineticConnectionErrors.InvalidMagicNumber
+            throw KineticEncodingErrors.InvalidMagicNumber
         }
         
         // TODO: make nocopy
-        let protoData = NSData(bytes: self.proto!, length: self.proto!.count)
-        let msg = try Message.parseFromData(protoData)
+        let protoData = NSData(bytes: self.proto, length: self.proto.count)
+        let msg = try { try Message.parseFromData(protoData) } >
+            { KineticEncodingErrors.DecodingFailure("Failed to parse message proto.", $0) }
+        
         // TODO: verify HMAC
-        let cmd = try Command.parseFromData(msg.commandBytes)
+        
+        let cmd = try { try Command.parseFromData(msg.commandBytes) } >
+            { KineticEncodingErrors.DecodingFailure("Failed to parse command proto.", $0) }
         
         return RawResponse(message: msg, command: cmd, value: self.value)
     }

@@ -21,6 +21,7 @@
 // @author: Ignacio Corderi
 
 import CryptoSwift
+import BrightFutures
 
 public typealias Bytes = [UInt8]
 
@@ -83,3 +84,31 @@ extension NSData {
         return NSData(bytes: hmac, length: hmac.count)
     }
 }
+
+public func > <T>(operation: () throws -> T, wrapper: ErrorType -> ErrorType) throws -> T {
+    do {
+        return try operation()
+    } catch let err {
+        throw wrapper(err)
+    }
+}
+
+public extension TimeInterval {
+    
+    public func wait<T> (operation: () -> T) throws -> T {
+        let p = Promise<T, NoError>()
+        
+        Queue.global.async {
+            let t = operation()
+            p.trySuccess(t) // can this fail?
+        }
+        
+        guard let v = p.future.forced(self) else {
+            throw KineticSessionErrors.Timeout
+        }
+        
+        return v.value!
+    }
+    
+}
+

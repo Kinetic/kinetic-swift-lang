@@ -26,12 +26,12 @@ typealias Command = Com.Seagate.Kinetic.Proto.Command
 public class Builder {
     internal var message: Message.Builder
     internal var command: Command.Builder
-    internal var value: Bytes?
+    internal var value: Bytes
     
     internal init() {
         self.message = Message.Builder()
         self.command = Command.Builder()
-        self.value = nil
+        self.value = []
     }
 }
 
@@ -56,7 +56,7 @@ extension Builder {
 public struct RawResponse {
     internal var message: Message
     internal var command: Command
-    internal var value: Bytes?
+    internal var value: Bytes
 }
 
 public protocol ChannelCommand {

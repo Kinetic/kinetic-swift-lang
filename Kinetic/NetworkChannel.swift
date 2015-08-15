@@ -20,7 +20,12 @@
 
 // @author: Ignacio Corderi
 
+import BrightFutures
+
 public let connect = NetworkChannel.connect
+public func connect(host: String, port: Int) throws ->  KineticSession {
+    return try NetworkChannel.connect(host, port: port, timeout: NetworkChannel.DEFAULT_CONNECT_TIMEOUT)
+}
 
 extension NSInputStream {
     
@@ -41,7 +46,17 @@ extension NSOutputStream {
     
 }
 
+extension NSStream {
+    public var isOpen : Bool {
+        return self.streamStatus == .Open ||
+            self.streamStatus == .Writing ||
+            self.streamStatus == .Reading
+    }
+}
+
 public class NetworkChannel: CustomStringConvertible, KineticChannel {
+    
+    public static let DEFAULT_CONNECT_TIMEOUT = TimeInterval.In(1.0)
     
     public let host: String
     public let port: Int
@@ -55,9 +70,10 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel {
     
     // KineticChannel
     weak public private(set) var session: KineticSession? = nil
-    public private(set) var error: ErrorType? = nil
     public var connected: Bool {
-        return self.inp != nil && self.out != nil
+        guard let inputStream = self.inp else { return false }
+        guard let outputStream = self.out else { return false }
+        return inputStream.isOpen && outputStream.isOpen
     }
     
     internal init(host:String, port:Int) {
@@ -65,29 +81,24 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel {
         self.port = port
     }
     
-    public static func connect(host: String, port: Int) -> KineticSession {
-        let c = NetworkChannel(host: host, port: port)
-        NSStream.getStreamsToHostWithName(host, port: port, inputStream: &c.inp, outputStream: &c.out)
-        
-        c.inp!.open()
-        c.out!.open()
-        
-        var device:KineticDevice? = nil
-        do {
-            let r = try c.receive()
-            device = KineticDevice(handshake: r.command)
-        } catch let err {
-            c.error = err
+    public static func connect(host: String, port: Int, timeout: TimeInterval) throws -> KineticSession {
+        return try timeout.wait {
+            let c = NetworkChannel(host: host, port: port)
+            NSStream.getStreamsToHostWithName(host, port: port, inputStream: &c.inp, outputStream: &c.out)
+            
+            c.inp!.open()
+            c.out!.open()
+            
+            let s = KineticSession(channel: c)
+            c.session = s
+            
+            return s
         }
-        
-        let s = KineticSession(channel: c, device: device)
-        c.session = s
-        
-        return s
     }
     
-    public func clone() -> KineticSession {
-        return NetworkChannel.connect(self.host, port: self.port)
+    public func clone() throws -> KineticSession {
+        return try NetworkChannel.connect(self.host, port: self.port,
+            timeout: NetworkChannel.DEFAULT_CONNECT_TIMEOUT)
     }
     
     public func close() {
@@ -103,9 +114,9 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel {
         let encoded = try builder.encode()
         
         outputStream.write(encoded.header.bytes)
-        outputStream.write(encoded.proto!)
-        if encoded.value != nil {
-            outputStream.write(encoded.value!)
+        outputStream.write(encoded.proto)
+        if encoded.value.count > 0 {
+            outputStream.write(encoded.value)
         }
     }
     
@@ -114,7 +125,7 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel {
         
         let header = KineticEncoding.Header(bytes: inputStream.read(fully: 9))
         let proto = inputStream.read(fully: header.protoLength)
-        var value: Bytes? = nil
+        var value: Bytes = []
         if header.valueLength > 0 {
             value = inputStream.read(fully: header.valueLength)
         }
@@ -127,19 +138,10 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel {
 
 extension NetworkChannel: CustomReflectable {
     public func customMirror() -> Mirror {
-        if self.error != nil {
-            return Mirror(self, children: [
-                "host" : self.host,
-                "port" : self.port,
-                "connected" : self.connected,
-                "error": self.error!,
-                ])
-        } else {
-            return Mirror(self, children: [
-                "host" : self.host,
-                "port" : self.port,
-                "connected" : self.connected,
-                ])
-        }
+        return Mirror(self, children: [
+            "host" : self.host,
+            "port" : self.port,
+            "connected" : self.connected,
+            ])
     }
 }

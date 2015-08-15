@@ -50,6 +50,7 @@ public class KineticSession {
     private var writerQueue :  dispatch_queue_t
     private var pending: [Int64: (RawResponse) -> ()]
     
+    public private(set) var error: ErrorType?
     public private(set) var device: KineticDevice?
     public private(set) var credentials: AuthenticationCredential
     
@@ -61,17 +62,25 @@ public class KineticSession {
         self.channel.close()
     }
   
-    public func clone() -> KineticSession {
-        return self.channel.clone()
+    public func clone() throws -> KineticSession {
+        return try self.channel.clone()
     }
     
-    internal init(channel: KineticChannel, device: KineticDevice?){
+    internal init(channel: KineticChannel){
         self.credentials = HmacCredential.defaultCredentials()
         self.sequence = 0
         self.channel = channel
-        self.device = device
         self.writerQueue = dispatch_get_main_queue()
         self.pending = [:]
+        
+        // Shake hands
+        do {
+            let r = try self.channel.receive()
+            self.device = KineticDevice(handshake: r.command)
+        } catch let err {
+            self.error = err
+            self.channel.close()
+        }
         
         // Reader
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
@@ -84,11 +93,12 @@ public class KineticSession {
                     if let x = self.pending[raw.command.header.ackSequence] {
                         Queue.global.async { x(raw) }
                     } else {
+                        // TODO: add support for unsolicited
                         print("Oops: Unsolicited or unexpected ACK :/")
                     }
-                } catch {
-                    // TODO: fault the session, close the channel
-                    print("Oops: please code me...")
+                } catch let err {
+                    self.error = err
+                    self.close()
                 }
             }
             print("Session closed, reader going away...")
@@ -102,13 +112,20 @@ public class KineticSession {
         }
     }
     
-    internal convenience init(withCredentials channel: KineticChannel, device: KineticDevice?,
-        credentials: AuthenticationCredential){
-            self.init(channel: channel, device: device)
+    internal convenience init(withCredentials channel: KineticChannel, credentials: AuthenticationCredential){
+            self.init(channel: channel)
             self.credentials = credentials
     }
     
-    public func promise<C: ChannelCommand>(cmd: C) -> Future<C.ResponseType, PromiseErrors> {
+    public func promise<C: ChannelCommand>(cmd: C) -> Future<C.ResponseType, WrappedError> {
+        // Prepare promise
+        let promise = Promise<C.ResponseType, WrappedError>()
+        
+        guard self.connected else {
+            promise.tryFailure(.Error(KineticSessionErrors.NotConnected))
+            return promise.future
+        }
+        
         // Prepare command contents
         let builder = cmd.build(Builder())
         
@@ -120,9 +137,6 @@ public class KineticSession {
         
         let m = builder.message
         
-        // Prepare promise
-        let promise = Promise<C.ResponseType, PromiseErrors>()
-        
         do {
             // Build command proto
             let cmdProto = try builder.command.build()
@@ -130,12 +144,26 @@ public class KineticSession {
             
             self.credentials.authenticate(builder)
             
-            
             self.pending[builder.command.header.sequence] = { r in
-                do {
-                    try promise.success(C.ResponseType.parse(r))
-                } catch {
-                    print("Mmm... when does this happen?")
+                let r = C.ResponseType.parse(r)
+                if r.failed {
+                    do {
+                        try promise.failure(.Error(r.error!))
+                    } catch {
+                        // Well... this is messed up
+                        // TODO: what makes this nonesense happen?
+                    }
+                } else {
+                    do {
+                        try promise.success(r)
+                    } catch let err {
+                        do {
+                            try promise.failure(.Error(FutureErrors.FailedToCallSuccess(err)))
+                        } catch {
+                            // Well... this is messed up
+                            // TODO: what makes this nonesense happen?
+                        }
+                    }
                 }
                 self.pending[builder.command.header.sequence] = nil
             }
@@ -145,13 +173,22 @@ public class KineticSession {
                 do {
                     print("Sending seq:\(builder.command.header.sequence)")
                     try self.channel.send(builder)
-                } catch {
-                    // TODO: write me!
-                    print("Sending failed :/ what a bummer")
+                } catch let err {
+                    do {
+                        try promise.failure(.Error(KineticSessionErrors.SendFailure(err)))
+                    } catch {
+                        // Well... this is messed up
+                        // TODO: what makes this nonesense happen?
+                    }
                 }
             }
-        } catch {
-            print("More oops! FIX ME")
+        } catch let err {
+            do {
+                try promise.failure(.Error(KineticSessionErrors.SendFailure(err)))
+            } catch {
+                // Well... this is messed up
+                // TODO: what makes this nonesense happen?
+            }
         }
         
         return promise.future
@@ -168,14 +205,24 @@ public class KineticSession {
     ///
     /// - Parameter cmd: The command that will be sent.
     /// - Returns: The response from the device.
-    public func send<C: ChannelCommand>(cmd: C) -> C.ResponseType {
-        let future = self.promise(cmd)
-        return future.forced()!.value!
+    public func send<C: ChannelCommand>(cmd: C) throws -> C.ResponseType {
+        return try self.send(cmd, timeout: TimeInterval.Forever)
     }
     
-    public func send<C: ChannelCommand>(cmd: C, timeout:NSTimeInterval) -> C.ResponseType {
+    public func send<C: ChannelCommand>(cmd: C, timeout:TimeInterval) throws -> C.ResponseType {
         let future = self.promise(cmd)
-        return future.forced(timeout)!.value!
+        guard let v = future.forced(timeout) else {
+            throw KineticSessionErrors.Timeout
+        }
+        guard let r = v.value else {
+            throw v.error!.unwrap()
+        }
+        if r.failed {
+            // Shouln't happen, the reader thread is already calling failure() 
+            // but just in case...
+            throw r.error!
+        }
+        return r
     }
 
 }

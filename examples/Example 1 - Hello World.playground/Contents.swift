@@ -3,7 +3,7 @@
 import Kinetic
 
 //: First connect to a `KineticDevice` by creating a `KineticSession`
-let c = Kinetic.connect("localhost", port: 8123)
+let c = try Kinetic.connect("localhost", port: 8123)
 
 //: Write a key/value pair
 try c.put("hello", value: "world")

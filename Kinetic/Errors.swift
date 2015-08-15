@@ -20,12 +20,33 @@
 
 // @author: Ignacio Corderi
 
-public enum KineticConnectionErrors: ErrorType {
-    case InvalidMagicNumber
+public protocol KineticError: ErrorType { }
+
+/// This type is a temporary workaround until Future<T, ErrorType> works.
+public enum WrappedError: KineticError {
+    case Error(KineticError)
+
+    public func unwrap() -> KineticError {
+        switch self {
+        case Error(let x): return x
+        }
+    }
 }
 
-public enum PromiseErrors: ErrorType {
-    case SomeError(ErrorType)
+public enum FutureErrors: KineticError {
+    case FailedToCallSuccess(ErrorType)
+}
+
+public enum KineticSessionErrors: KineticError {
+    case SendFailure(ErrorType)
+    case NotConnected
+    case Timeout
+}
+
+public enum KineticEncodingErrors: KineticError {
+    case InvalidMagicNumber
+    case EncodingFailure(String, ErrorType)
+    case DecodingFailure(String, ErrorType)
 }
 
 public enum StatusCode : Int {
@@ -84,7 +105,7 @@ extension StatusCode {
     }
 }
 
-public struct KineticRemoteError: ErrorType {
+public struct KineticRemoteError: KineticError {
     let code: StatusCode
     let message: String
     let detailedMessage: NSData

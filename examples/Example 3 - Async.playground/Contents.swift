@@ -1,10 +1,9 @@
-//: ## Example 2 - Async
+//: ## Example 3 - Async
 
 import Kinetic
 import XCPlayground
 
-//: First connect to a `KineticDevice` by creating a `KineticSession`
-let c = Kinetic.connect("localhost", port: 8123)
+let c = try Kinetic.connect("localhost", port: 8123)
 
 //: Create some command to send
 let put = PutCommand(key: "hello", value: "world")

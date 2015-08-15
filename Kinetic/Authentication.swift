@@ -21,9 +21,7 @@
 // @author: Ignacio Corderi
 
 public protocol AuthenticationCredential {
-    
     func authenticate(builder: Builder)
-    
 }
 
 public struct HmacCredential: AuthenticationCredential  {

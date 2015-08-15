@@ -20,11 +20,10 @@
 
 // @author: Ignacio Corderi
 
-public protocol KineticChannel {
-    var error: ErrorType? { get }
+public protocol KineticChannel {    
     var connected: Bool { get }
     func send(builder: Builder) throws
     func receive() throws -> RawResponse
-    func clone() -> KineticSession
+    func clone() throws -> KineticSession
     func close()
 }
