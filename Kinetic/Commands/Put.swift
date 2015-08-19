@@ -20,31 +20,44 @@
 
 // @author: Ignacio Corderi
 
+public enum SynchronizationMode {
+    /// Asynchronous
+    case Writeback
+    /// Synchronous
+    case Writethrough
+    case Flush
+
+    internal func build(builder: Builder) {
+        switch self {
+        case .Writeback: builder.keyValue.synchronization = .Writeback
+        case .Writethrough: builder.keyValue.synchronization = .Writethrough
+        case .Flush: builder.keyValue.synchronization = .Flush
+        }
+    }
+}
+
+
 public class PutCommand : ChannelCommand {
     
     public typealias ResponseType = EmptyResponse
     
-    public let key: NSData
-    public let value: Bytes
+    public let key: KeyType
+    public let value: ValueType
+    public let synchronization: SynchronizationMode
     
-    public init(key: NSData, value: Bytes) {
+    public init(key: KeyType, value: ValueType, sync: SynchronizationMode = .Writeback) {
         self.key = key
         self.value = value
+        self.synchronization = sync
     }
     
-    public convenience init(key: String, value: String) {
-        self.init(key: key.toNSData(),
-                  value: value.toUtf8())
-    }
-    
-    public func build(builder: Builder) -> Builder {
+    public func build(builder: Builder, device: KineticDevice) {
         builder.header.messageType = .Put
-        builder.keyValue.key = self.key
-        builder.keyValue.synchronization = .Writeback
-        builder.keyValue.tag = "1337".toNSData()
+        builder.keyValue.key = self.key.toData()
+        builder.keyValue.tag = "1337".toData()
         builder.keyValue.algorithm = .Sha1
-        builder.value = value
-        return builder
+        self.synchronization.build(builder)
+        builder.value = value.toBytes()
     }
     
 }
@@ -52,14 +65,14 @@ public class PutCommand : ChannelCommand {
 extension PutCommand: CustomStringConvertible {
     public var description: String {
         get {
-            return "Put (key: \(self.key.toUtf8()), length: \(self.value.count))"
+            return "Put (key: \(self.key), length: \(self.value.length))"
         }
     }
 }
 
 public extension KineticSession {
-    func put(key: String, value: String) throws -> PutCommand.ResponseType {
-        let cmd = PutCommand(key: key, value: value)
+    func put(key: KeyType, value: ValueType, sync: SynchronizationMode = .Writeback) throws -> PutCommand.ResponseType {
+        let cmd = PutCommand(key: key, value: value, sync: sync)
         return try cmd.sendTo(self)
     }
 }

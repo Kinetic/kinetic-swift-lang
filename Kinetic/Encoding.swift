@@ -65,7 +65,7 @@ public struct KineticEncoding {
         let protoData = proto.data()
         let header = Header(protoLength: protoData.length, valueLength: builder.value.count)
         
-        return KineticEncoding(header, protoData.asBytes(), builder.value)
+        return KineticEncoding(header, protoData.toBytes(), builder.value)
     }
     
     public func decode() throws -> RawResponse {

@@ -21,23 +21,25 @@
 // @author: Ignacio Corderi
 
 public struct NoResponse : ChannelResponse {
+    public typealias ContextType = Void
     public let success: Bool
     public let error: KineticRemoteError?
     
-    public static func parse(raw: RawResponse) -> NoResponse {
+    public static func parse(raw: RawResponse, context: Void) -> NoResponse {
         return NoResponse(success: raw.command.status.code == .Success,
             error: KineticRemoteError.fromStatus(raw.command.status))
     }
 }
 
 public struct ValueResponse : ChannelResponse {
+    public typealias ContextType = Void
     public let success: Bool
     public let error: KineticRemoteError?
     public let value: Bytes?
     public let exists: Bool
     public var hasValue: Bool { return value != nil && value!.count > 0 }
     
-    public static func parse(raw: RawResponse) -> ValueResponse {
+    public static func parse(raw: RawResponse, context: Void) -> ValueResponse {
         switch raw.command.status.code {
         case .Success:
             return ValueResponse(success: true, error: nil, value: raw.value, exists: true)

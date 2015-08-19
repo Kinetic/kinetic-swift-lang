@@ -23,7 +23,7 @@
 import BrightFutures
 
 public let connect = NetworkChannel.connect
-public func connect(host: String, port: Int) throws ->  KineticSession {
+public func connect(host: String, port: Int = NetworkChannel.DEFAULT_PORT) throws ->  KineticSession {
     return try NetworkChannel.connect(host, port: port, timeout: NetworkChannel.DEFAULT_CONNECT_TIMEOUT)
 }
 
@@ -57,6 +57,7 @@ extension NSStream {
 public class NetworkChannel: CustomStringConvertible, KineticChannel {
     
     public static let DEFAULT_CONNECT_TIMEOUT = TimeInterval.In(1.0)
+    public static let DEFAULT_PORT = 8123
     
     public let host: String
     public let port: Int

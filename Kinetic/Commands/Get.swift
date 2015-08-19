@@ -24,20 +24,15 @@ public class GetCommand : ChannelCommand {
     
     public typealias ResponseType = ValueResponse
     
-    public let key: NSData
+    public let key: KeyType
     
-    public init(key: NSData) {
+    public init(key: KeyType) {
         self.key = key
     }
     
-    public convenience init(key: String) {
-        self.init(key: key.toNSData())
-    }
-    
-    public func build(builder: Builder) -> Builder {
+    public func build(builder: Builder, device: KineticDevice) {
         builder.header.messageType = .Get
-        builder.keyValue.key = self.key
-        return builder
+        builder.keyValue.key = self.key.toData()
     }
     
 }
@@ -45,7 +40,7 @@ public class GetCommand : ChannelCommand {
 extension GetCommand: CustomStringConvertible {
     public var description: String {
         get {
-            return "Get (key: \(self.key.toUtf8()))"
+            return "Get (key: \(self.key))"
         }
     }
 }

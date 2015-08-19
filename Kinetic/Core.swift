@@ -23,6 +23,32 @@
 typealias Message = Com.Seagate.Kinetic.Proto.Message_
 typealias Command = Com.Seagate.Kinetic.Proto.Command
 
+public protocol KeyType {
+    func toData() -> NSData
+}
+public protocol ValueType {
+    var length: Int { get }
+    func toBytes() -> Bytes
+}
+
+extension NSData: KeyType, ValueType {
+    public func toData() -> NSData { return self }
+    public func toBytes() -> Bytes {
+        // TODO: figure out how to do this without copying!
+        var buffer = Bytes(count: self.length, repeatedValue: 0)
+        self.getBytes(&buffer, length: self.length)
+        return buffer
+    }
+}
+
+extension String: KeyType, ValueType {
+    public var length: Int { return self.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) }
+    public func toData() -> NSData {
+        return NSData(data: self.dataUsingEncoding(NSUTF8StringEncoding)!)
+    }
+    public func toBytes() -> Bytes { return self.toUtf8() }
+}
+
 public class Builder {
     internal var message: Message.Builder
     internal var command: Command.Builder
@@ -61,7 +87,7 @@ public struct RawResponse {
 
 public protocol ChannelCommand {
     typealias ResponseType: ChannelResponse
-    func build(builder: Builder) -> Builder
+    func build(builder: Builder, device: KineticDevice) -> ResponseType.ContextType
 }
 
 public extension ChannelCommand {
@@ -71,9 +97,10 @@ public extension ChannelCommand {
 }
 
 public protocol ChannelResponse : CustomStringConvertible {
+    typealias ContextType
     var success: Bool { get }
     var error: KineticRemoteError? { get }
-    static func parse(raw: RawResponse) -> Self
+    static func parse(raw: RawResponse, context: Self.ContextType) -> Self
 }
 
 public extension ChannelResponse {

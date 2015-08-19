@@ -26,11 +26,19 @@ import BrightFutures
 public struct KineticDevice : Equatable {
     internal let handshake: Command
     
+    internal var config: Command.GetLog.Configuration {
+        return self.handshake.body.getLog.configuration
+    }
+    
+    internal var limits: Command.GetLog.Limits {
+        return self.handshake.body.getLog.limits
+    }
+
+    
     public var clusterVersion: Int64 { return self.handshake.header.clusterVersion }
     public var wwn: String {
-        let config = self.handshake.body.getLog.configuration
-        return NSString(data: config.worldWideName, encoding:NSUTF8StringEncoding)!.description
-    }
+        return NSString(data: self.config.worldWideName, encoding:NSUTF8StringEncoding)!.description
+    }    
     
     internal init(handshake: Command) {
         self.handshake = handshake
@@ -66,7 +74,7 @@ public class KineticSession {
         return try self.channel.clone()
     }
     
-    internal init(channel: KineticChannel){
+    public init(channel: KineticChannel){
         self.credentials = HmacCredential.defaultCredentials()
         self.sequence = 0
         self.channel = channel
@@ -84,24 +92,24 @@ public class KineticSession {
         
         // Reader
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
-            print("Background reader for \(self.connectionId!) is active.")
+            debugPrint("Background reader for \(self.connectionId!) is active.")
             while self.connected {
                 do {
-                    print("waiting...")
+                    debugPrint("waiting...")
                     let raw = try self.channel.receive()
-                    print("Background loops seems to work... Ack:\(raw.command.header.ackSequence)")
+                    debugPrint("Background loops seems to work... Ack:\(raw.command.header.ackSequence)")
                     if let x = self.pending[raw.command.header.ackSequence] {
                         Queue.global.async { x(raw) }
                     } else {
                         // TODO: add support for unsolicited
-                        print("Oops: Unsolicited or unexpected ACK :/")
+                        debugPrint("Oops: Unsolicited or unexpected ACK :/")
                     }
                 } catch let err {
                     self.error = err
                     self.close()
                 }
             }
-            print("Session closed, reader going away...")
+            debugPrint("Session closed, reader going away...")
         }
         
         // We only need the writer queue if connection was ok
@@ -127,7 +135,8 @@ public class KineticSession {
         }
         
         // Prepare command contents
-        let builder = cmd.build(Builder())
+        let builder = Builder()
+        let context = cmd.build(builder, device: self.device!)
         
         // Prepare header
         let h = builder.header
@@ -145,7 +154,7 @@ public class KineticSession {
             self.credentials.authenticate(builder)
             
             self.pending[builder.command.header.sequence] = { r in
-                let r = C.ResponseType.parse(r)
+                let r = C.ResponseType.parse(r, context: context)
                 if r.failed {
                     do {
                         try promise.failure(.Error(r.error!))
@@ -171,7 +180,7 @@ public class KineticSession {
             // Queue the command to be sent to the target device
             dispatch_async(self.writerQueue) {
                 do {
-                    print("Sending seq:\(builder.command.header.sequence)")
+                    debugPrint("Sending seq:\(builder.command.header.sequence)")
                     try self.channel.send(builder)
                 } catch let err {
                     do {

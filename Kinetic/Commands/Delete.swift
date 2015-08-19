@@ -31,23 +31,24 @@ public class DeleteCommand : ChannelCommand {
     }
     
     public convenience init(key: String) {
-        self.init(key: key.toNSData())
+        self.init(key: key.toData())
     }
     
-    public func build(builder: Builder) -> Builder {
+    public func build(builder: Builder, device: KineticDevice) {
         builder.header.messageType = .Delete
         builder.keyValue.key = self.key
-        return builder
     }
     
 }
 
 public struct EmptyResponse : ChannelResponse {
+    public typealias ContextType = Void
+    
     public let success: Bool
     public let error: KineticRemoteError?
     public let exists: Bool
     
-    public static func parse(raw: RawResponse) -> EmptyResponse {
+    public static func parse(raw: RawResponse, context: Void) -> EmptyResponse {
         switch raw.command.status.code {
         case .Success:
             return EmptyResponse(success: true, error: nil, exists: true)

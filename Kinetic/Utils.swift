@@ -47,23 +47,12 @@ public extension String {
         return decodedBytes
     }
     
-    func toNSData() -> NSData {
-        return NSData(data: self.dataUsingEncoding(NSUTF8StringEncoding)!)
-    }
-    
     static func fromUtf8(bytes: Bytes) -> String {
         return NSString(bytes: bytes, length: bytes.count, encoding:NSUTF8StringEncoding)!.description
     }
 }
 
-extension NSData {
-    
-    public func asBytes() -> Bytes {
-        // TODO: figure out how to do this without copying!
-        var buffer = Bytes(count: self.length, repeatedValue: 0)
-        self.getBytes(&buffer, length: self.length)
-        return buffer
-    }
+extension NSData {    
     
     public func toUtf8() -> String {
         return NSString(data: self, encoding:NSUTF8StringEncoding)!.description
