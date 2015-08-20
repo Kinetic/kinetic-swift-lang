@@ -53,4 +53,9 @@ try c.getKeyRange(.Prefix("demo"))
 try c.getKeyRange(.Prefix("demo"), reverse: true)
 try c.getKeyRange(.Prefix("demo"), reverse: true, maxReturned: 42)
 
+//: If we wish to iterate through a range of keys that might span the entire 
+//: contents of the device, we can use `KineticSession.traverse()`
+let ks = try c.traverse(.From("", true), reverse: false, batch: 64)
+for k in ks { print(k.toUtf8()) }
+
 c.close()

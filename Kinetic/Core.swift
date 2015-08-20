@@ -32,21 +32,28 @@ public protocol ValueType {
 }
 
 extension NSData: KeyType, ValueType {
+    
     public func toData() -> NSData { return self }
+    
     public func toBytes() -> Bytes {
         // TODO: figure out how to do this without copying!
         var buffer = Bytes(count: self.length, repeatedValue: 0)
         self.getBytes(&buffer, length: self.length)
         return buffer
     }
+    
 }
 
 extension String: KeyType, ValueType {
+    
     public var length: Int { return self.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) }
+    
     public func toData() -> NSData {
         return NSData(data: self.dataUsingEncoding(NSUTF8StringEncoding)!)
     }
+    
     public func toBytes() -> Bytes { return self.toUtf8() }
+    
 }
 
 public class Builder {
