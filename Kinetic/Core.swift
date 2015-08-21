@@ -56,6 +56,15 @@ extension String: KeyType, ValueType {
     
 }
 
+extension UInt32: ValueType {
+    public var length: Int { return 4 }
+    public func toBytes() -> Bytes {
+        var buffer = Bytes(count: 4, repeatedValue: 0)
+        copyFromUInt32(&buffer, offset: 0, value: self)
+        return buffer
+    }
+}
+
 public class Builder {
     internal var message: Message.Builder
     internal var command: Command.Builder

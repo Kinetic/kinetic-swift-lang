@@ -14,6 +14,7 @@
 		3EDAAB481B66D32D00F30808 /* Kinetic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EDAAB3D1B66D32D00F30808 /* Kinetic.framework */; };
 		3EDAAB4D1B66D32D00F30808 /* KineticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDAAB4C1B66D32D00F30808 /* KineticTests.swift */; };
 		3EDAAB581B66D47200F30808 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDAAB571B66D47200F30808 /* Session.swift */; };
+		3EDB8E881B87198900503F9A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDB8E871B87198900503F9A /* Extensions.swift */; };
 		3EFB7F1C1B7A55D100988886 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F1B1B7A55D100988886 /* Core.swift */; };
 		3EFB7F1E1B7A6A9800988886 /* Put.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F1D1B7A6A9800988886 /* Put.swift */; };
 		3EFB7F201B7A6C3300988886 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F1F1B7A6C3300988886 /* Errors.swift */; };
@@ -51,6 +52,7 @@
 		3EDAAB4C1B66D32D00F30808 /* KineticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KineticTests.swift; sourceTree = "<group>"; };
 		3EDAAB4E1B66D32D00F30808 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3EDAAB571B66D47200F30808 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		3EDB8E871B87198900503F9A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3EF4F82D1B7BE11400E4EB73 /* Example 1 - Hello World.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = "Example 1 - Hello World.playground"; sourceTree = "<group>"; };
 		3EFB7F1B1B7A55D100988886 /* Core.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
 		3EFB7F1D1B7A6A9800988886 /* Put.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Put.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 		3EFB7F231B7A951000988886 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				3EDB8E871B87198900503F9A /* Extensions.swift */,
 				3EFB7F241B7A977500988886 /* Common.swift */,
 				3EFB7F1D1B7A6A9800988886 /* Put.swift */,
 				3EFB7F261B7AA45A00988886 /* Get.swift */,
@@ -327,6 +330,7 @@
 				3EDAAB581B66D47200F30808 /* Session.swift in Sources */,
 				3EFB7F271B7AA45A00988886 /* Get.swift in Sources */,
 				3E07EA7F1B78E3B500DAB3F1 /* Kinetic.proto.swift in Sources */,
+				3EDB8E881B87198900503F9A /* Extensions.swift in Sources */,
 				3EFB7F221B7A7A8000988886 /* Utils.swift in Sources */,
 				3EFB7F251B7A977500988886 /* Common.swift in Sources */,
 				3EFB7F2F1B7BB4E700988886 /* Authentication.swift in Sources */,

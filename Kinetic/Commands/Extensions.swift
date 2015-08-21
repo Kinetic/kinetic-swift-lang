@@ -20,35 +20,18 @@
 
 // @author: Ignacio Corderi
 
-public class GetCommand : ChannelCommand {
-    
-    public typealias ResponseType = ValueResponse
-    
-    public let key: KeyType
-    
-    public init(key: KeyType) {
-        self.key = key
-    }
-    
-    public func build(builder: Builder, device: KineticDevice) {
-        builder.header.messageType = .Get
-        builder.keyValue.key = self.key.toData()
-    }
-    
-}
+extension KineticSession {
 
-extension GetCommand: CustomStringConvertible {
-    public var description: String {
-        get {
-            return "Get (key: \(self.key))"
+    public func increment(key: KeyType, value: UInt32) throws -> UInt32 {
+        // TODO: use a random version to avoid a race
+        let r = try self.get(key)
+        var v: UInt32 = 0
+        if r.exists {
+            v = bytesToUInt32(r.value!, offset: 0)
         }
+        v += value
+        try self.put(key, value: v)
+        return v
     }
-}
-
-
-public extension KineticSession {
-    func get(key: KeyType) throws -> GetCommand.ResponseType {
-        let cmd = GetCommand(key: key)
-        return try cmd.sendTo(self)
-    }
+    
 }
