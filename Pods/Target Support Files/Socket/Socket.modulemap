@@ -1,0 +1,6 @@
+framework module Socket {
+  umbrella header "Socket-umbrella.h"
+
+  export *
+  module * { export * }
+}
