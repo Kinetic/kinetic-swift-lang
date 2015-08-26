@@ -15,6 +15,7 @@
 		3EDAAB4D1B66D32D00F30808 /* KineticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDAAB4C1B66D32D00F30808 /* KineticTests.swift */; };
 		3EDAAB581B66D47200F30808 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDAAB571B66D47200F30808 /* Session.swift */; };
 		3EDB8E881B87198900503F9A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDB8E871B87198900503F9A /* Extensions.swift */; };
+		3EDB8E8A1B871C5C00503F9A /* Batch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDB8E891B871C5C00503F9A /* Batch.swift */; };
 		3EFB7F1C1B7A55D100988886 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F1B1B7A55D100988886 /* Core.swift */; };
 		3EFB7F1E1B7A6A9800988886 /* Put.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F1D1B7A6A9800988886 /* Put.swift */; };
 		3EFB7F201B7A6C3300988886 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F1F1B7A6C3300988886 /* Errors.swift */; };
@@ -53,6 +54,8 @@
 		3EDAAB4E1B66D32D00F30808 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3EDAAB571B66D47200F30808 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		3EDB8E871B87198900503F9A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		3EDB8E891B871C5C00503F9A /* Batch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Batch.swift; sourceTree = "<group>"; };
+		3EDB8E8B1B87299700503F9A /* Example 4 - Batch.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = "Example 4 - Batch.playground"; sourceTree = "<group>"; };
 		3EF4F82D1B7BE11400E4EB73 /* Example 1 - Hello World.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = "Example 1 - Hello World.playground"; sourceTree = "<group>"; };
 		3EFB7F1B1B7A55D100988886 /* Core.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
 		3EFB7F1D1B7A6A9800988886 /* Put.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Put.swift; sourceTree = "<group>"; };
@@ -151,6 +154,7 @@
 				3EF4F82D1B7BE11400E4EB73 /* Example 1 - Hello World.playground */,
 				3E386E6A1B7F85720040D363 /* Example 2 - Basics.playground */,
 				3ED681EE1B7D0EC600AFDF79 /* Example 3 - Async.playground */,
+				3EDB8E8B1B87299700503F9A /* Example 4 - Batch.playground */,
 			);
 			path = examples;
 			sourceTree = "<group>";
@@ -164,6 +168,7 @@
 				3EFB7F261B7AA45A00988886 /* Get.swift */,
 				3EFB7F281B7AB06800988886 /* Delete.swift */,
 				3EA070361B846C3800E4821E /* KeyRange.swift */,
+				3EDB8E891B871C5C00503F9A /* Batch.swift */,
 			);
 			path = Commands;
 			sourceTree = "<group>";
@@ -328,6 +333,7 @@
 				3EFB7F291B7AB06800988886 /* Delete.swift in Sources */,
 				3EFB7F2D1B7BAF8D00988886 /* NetworkChannel.swift in Sources */,
 				3EDAAB581B66D47200F30808 /* Session.swift in Sources */,
+				3EDB8E8A1B871C5C00503F9A /* Batch.swift in Sources */,
 				3EFB7F271B7AA45A00988886 /* Get.swift in Sources */,
 				3E07EA7F1B78E3B500DAB3F1 /* Kinetic.proto.swift in Sources */,
 				3EDB8E881B87198900503F9A /* Extensions.swift in Sources */,

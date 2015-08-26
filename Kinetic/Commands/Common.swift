@@ -20,13 +20,13 @@
 
 // @author: Ignacio Corderi
 
-public struct NoResponse : ChannelResponse {
+public struct VoidResponse : ChannelResponse {
     public typealias ContextType = Void
     public let success: Bool
     public let error: KineticRemoteError?
     
-    public static func parse(raw: RawResponse, context: Void) -> NoResponse {
-        return NoResponse(success: raw.command.status.code == .Success,
+    public static func parse(raw: RawResponse, context: Void) -> VoidResponse {
+        return VoidResponse(success: raw.command.status.code == .Success,
             error: KineticRemoteError.fromStatus(raw.command.status))
     }
 }
@@ -35,20 +35,20 @@ public struct ValueResponse : ChannelResponse {
     public typealias ContextType = Void
     public let success: Bool
     public let error: KineticRemoteError?
-    public let value: Bytes?
+    public let value: ValueType?
     public let exists: Bool
-    public var hasValue: Bool { return value != nil && value!.count > 0 }
+    public var hasValue: Bool { return value != nil && value!.length > 0 }
     
     public static func parse(raw: RawResponse, context: Void) -> ValueResponse {
         switch raw.command.status.code {
         case .Success:
-            return ValueResponse(success: true, error: nil, value: raw.value, exists: true)
+            return ValueResponse(success: true, error: nil, value: NSData.fromBytes(raw.value), exists: true)
         case .NotFound:
             return ValueResponse(success: true, error: nil, value: nil, exists: false)
         default:
             return ValueResponse(success: false,
             error: KineticRemoteError.fromStatus(raw.command.status),
-            value: raw.value,
+            value: NSData.fromBytes(raw.value),
             exists: false)
         }
     }
@@ -57,7 +57,7 @@ public struct ValueResponse : ChannelResponse {
         get {
             if self.success {
                 if self.hasValue {
-                    return "Success (length: \(self.value!.count))"
+                    return "Success (length: \(self.value!.length))"
                 } else {
                     return "Success (Empty)"
                 }

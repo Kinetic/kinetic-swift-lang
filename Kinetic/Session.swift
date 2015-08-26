@@ -103,6 +103,7 @@ public class KineticSession {
                     } else {
                         // TODO: add support for unsolicited
                         debugPrint("Oops: Unsolicited or unexpected ACK :/")
+                        debugPrint(raw.command)
                     }
                 } catch let err {
                     self.error = err
@@ -153,43 +154,67 @@ public class KineticSession {
             
             self.credentials.authenticate(builder)
             
-            self.pending[builder.command.header.sequence] = { r in
-                let r = C.ResponseType.parse(r, context: context)
-                if r.failed {
+            if C.ResponseType.self == NoResponse.self {
+                // Some operations don't have a reply at all
+                
+                // Queue the command to be sent to the target device
+                dispatch_async(self.writerQueue) {
                     do {
-                        try promise.failure(.Error(r.error!))
-                    } catch {
-                        // Well... this is messed up
-                        // TODO: what makes this nonesense happen?
-                    }
-                } else {
-                    do {
-                        try promise.success(r)
+                        debugPrint("Sending seq:\(builder.command.header.sequence)")
+                        debugPrint(builder.command)
+                        try self.channel.send(builder)
+                        
+                        // As soon as we are done sending, we can consider the operation a success
+                        try promise.success(NoResponse() as! C.ResponseType)
                     } catch let err {
                         do {
-                            try promise.failure(.Error(FutureErrors.FailedToCallSuccess(err)))
+                            try promise.failure(.Error(KineticSessionErrors.SendFailure(err)))
                         } catch {
                             // Well... this is messed up
                             // TODO: what makes this nonesense happen?
                         }
                     }
                 }
-                self.pending[builder.command.header.sequence] = nil
-            }
-            
-            // Queue the command to be sent to the target device
-            dispatch_async(self.writerQueue) {
-                do {
-                    debugPrint("Sending seq:\(builder.command.header.sequence)")
-                    try self.channel.send(builder)
-                } catch let err {
+            } else {
+                self.pending[builder.command.header.sequence] = { r in
+                    let r = C.ResponseType.parse(r, context: context)
+                    if r.failed {
+                        do {
+                            try promise.failure(.Error(r.error!))
+                        } catch {
+                            // Well... this is messed up
+                            // TODO: what makes this nonesense happen?
+                        }
+                    } else {
+                        do {
+                            try promise.success(r)
+                        } catch let err {
+                            do {
+                                try promise.failure(.Error(FutureErrors.FailedToCallSuccess(err)))
+                            } catch {
+                                // Well... this is messed up
+                                // TODO: what makes this nonesense happen?
+                            }
+                        }
+                    }
+                    self.pending[builder.command.header.sequence] = nil
+                }
+                
+                // Queue the command to be sent to the target device
+                dispatch_async(self.writerQueue) {
                     do {
-                        try promise.failure(.Error(KineticSessionErrors.SendFailure(err)))
-                    } catch {
-                        // Well... this is messed up
-                        // TODO: what makes this nonesense happen?
+                        debugPrint("Sending seq:\(builder.command.header.sequence)")
+                        try self.channel.send(builder)
+                    } catch let err {
+                        do {
+                            try promise.failure(.Error(KineticSessionErrors.SendFailure(err)))
+                        } catch {
+                            // Well... this is messed up
+                            // TODO: what makes this nonesense happen?
+                        }
                     }
                 }
+                
             }
         } catch let err {
             do {

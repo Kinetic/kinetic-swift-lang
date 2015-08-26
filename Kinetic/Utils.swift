@@ -54,8 +54,8 @@ public extension String {
 
 extension NSData {    
     
-    public func toUtf8() -> String {
-        return NSString(data: self, encoding:NSUTF8StringEncoding)!.description
+    public static func fromBytes(buffer: Bytes) -> NSData{
+        return NSData(bytes: buffer, length: buffer.count)
     }
     
     func hmacSha1(key: String) -> NSData {

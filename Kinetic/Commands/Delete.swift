@@ -81,7 +81,7 @@ public struct EmptyResponse : ChannelResponse {
 extension DeleteCommand: CustomStringConvertible {
     public var description: String {
         get {
-            return "Delete (key: \(self.key.toUtf8()))"
+            return "Delete (key: \(self.key.toUtf8String()))"
         }
     }
 }

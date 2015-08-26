@@ -29,6 +29,7 @@ public protocol KeyType {
 public protocol ValueType {
     var length: Int { get }
     func toBytes() -> Bytes
+    func toUtf8String() -> String
 }
 
 extension NSData: KeyType, ValueType {
@@ -40,6 +41,10 @@ extension NSData: KeyType, ValueType {
         var buffer = Bytes(count: self.length, repeatedValue: 0)
         self.getBytes(&buffer, length: self.length)
         return buffer
+    }
+    
+    public func toUtf8String() -> String {
+        return NSString(data: self, encoding:NSUTF8StringEncoding)!.description
     }
     
 }
@@ -54,14 +59,21 @@ extension String: KeyType, ValueType {
     
     public func toBytes() -> Bytes { return self.toUtf8() }
     
+    public func toUtf8String() -> String { return self }
 }
 
 extension UInt32: ValueType {
+    
     public var length: Int { return 4 }
+    
     public func toBytes() -> Bytes {
         var buffer = Bytes(count: 4, repeatedValue: 0)
         copyFromUInt32(&buffer, offset: 0, value: self)
         return buffer
+    }
+    
+    public func toUtf8String() -> String {
+        return self.description
     }
 }
 

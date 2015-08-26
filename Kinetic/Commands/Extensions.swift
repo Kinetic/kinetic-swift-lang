@@ -27,7 +27,8 @@ extension KineticSession {
         let r = try self.get(key)
         var v: UInt32 = 0
         if r.exists {
-            v = bytesToUInt32(r.value!, offset: 0)
+            let raw = r.value!.toBytes()
+            v = bytesToUInt32(raw, offset: 0)
         }
         v += value
         try self.put(key, value: v)
