@@ -7,64 +7,42 @@ protocol StreamProtocol {
     //    Create a connection witin timeout period to host and port specified.
     //    the connection will have Nagle and sigPipe turned off. timeout defaults
     //    to forever (or until the host gives up which is 30 seconds I think)
-    //    TODO: make timeout Double
-    //
-    //    throws: If not successful
     init(connectTo host:String, port: in_port_t, var timeout: Double) throws
     
-    //    Listens to a either an ephemeral or fixes port. A listen socket is only
-    //    good for accepting connections.
-    //
-    //    throws: if not successful
-    //    init(listenPort: in_port_t) throws
-    //
-    //    Returns: the port number that is being listened to
+    //    the port number that is being listened to
     var port:in_port_t { get }
     
     
-    //    Blocks until someone sends a connect to a listening instance.
-    //
-    //    returns: the instance unless the accept has been closed down, and 
+    //    Blocks until someone sends a connect to a listening instance. Returns
+    //    the instance unless the accept has been closed down, and
     //    in that case returns nil
-    //
-    //    throws: if not successful (there is no timeout)
     func acceptConnection() throws -> Stream?
     
     //    Writes data to a connect or accpeted session. Cork is an optional parameter
     //    that defalts to false. cork = true delays the write until the stream is written to
     //    again with cork = false.
-    //
-    //    throws: if all the data is not successfully written
     func writeBytes(inout bytes: Bytes, cork: Bool) throws
     
     //    Reads data until the size is satisfied, EoF or there is more than timeout
     //    witout reading additional bytes. If timeout is not specified it is "forever".
-    //
-    //    returns: the bytes read up size, EoF or timeout. To differentiate from EoF and
-    //    timeout use atEoF
-    //
-    //    throws if there is any other reason why size bytes are not read
+    //    Returns the bytes read up size, EoF or timeout. To differentiate from EoF and
+    //    timeout use eof
     func readBytes(size:Int, timeout: Double) throws -> Bytes
     
-    //    Reads Bytes preserving natural boundries.
-    //
-    //    Returns: Bytes up to size or lrngth of 0 if there is
-    //    an EoF or timeout. default timeout is "forever".
-    //
-    //    throws: for any other reason
+    //    Reads Bytes preserving natural boundries. retuns the 
+    //    available data or 0 if there is an eof or timeout
     func readNextBytes(size: Int, timeout: Double) throws -> Bytes
     
     //    Returns true if the stream is at EoF
-    var atEoF:Bool { get }
+    var eof:Bool { get }
     
     //    Graceful sutdown of the write channel. Data can still be read
-    //
-    //    throws: if there is a problem.
     func shutdownSocket() throws
     
     //    Shuts down the complete connection regardless of state. Does not
     //    throw so it can be used in "catch".
     func releaseSock()
+    
 }
 
 extension sockaddr {
@@ -103,26 +81,14 @@ extension timeval {
     }
 }
 
-public class Stream: StreamProtocol {
+public class Stream: Socket, StreamProtocol {
     
-    private var s:Int32
-    private var eof = false
     private var shuttingDown = false
-    
-    public var atEoF:Bool {
-        return eof
-    }
-    
-    public private(set) var port:in_port_t  = 0;
+        
+    public private(set) var eof:Bool  = false;
     
     public required init(connectTo host:String, port: in_port_t, timeout: Double) throws {
-        s = socket(AF_INET, SOCK_STREAM, 0)
-        guard ( s != -1 ) else {
-            throw PosixError(comment: "socket(....) failed")
-        }
-        
-        // don't want signals...
-        try nosigpipe()
+        try super.init(sock: socket(AF_INET,SOCK_STREAM,0))
         
         // disable Nagle
         var value: Int32 = 1;
@@ -145,11 +111,10 @@ public class Stream: StreamProtocol {
     
     
     public required init(listenPort: in_port_t = 0) throws {
-        s = socket(AF_INET, SOCK_STREAM, 0)
+        try super.init(sock: socket(AF_INET, SOCK_STREAM, 0))
         guard ( s != -1 ) else {
             throw PosixError(comment: "socket(....) failed")
         }
-        try nosigpipe()
         
         // Set Reuse Socket
         var value: Int32 = 1;
@@ -167,17 +132,7 @@ public class Stream: StreamProtocol {
             throw PosixError(comment: "listen(...) failed.")
         }
 
-        var sa = sockaddr()
-        var salen = socklen_t(strideof(sockaddr))
-        guard getsockname(s, &sa, &salen) == 0 else {
-            throw PosixError(comment: "getsockname(...) failed.")
-        }
-        let sin = sockaddr_in(fromSockaddr: sa)
-        guard sin.sin_family == sa_family_t(AF_INET) else {
-            fatalError("wrone networking family")
-        }
-
-        port = sin.sin_port.byteSwapped
+        try setPort()
     }
     
     
@@ -213,8 +168,8 @@ public class Stream: StreamProtocol {
     
     
     // Used only by the accept to create a new socket.
-    private init(clientSock: Int32) {
-        s = clientSock
+    override init(sock: Int32) throws {
+        try super.init(sock: sock)
     }
     
     // TODO: In the future, return nil when a normal close happens on Socket
@@ -223,8 +178,7 @@ public class Stream: StreamProtocol {
         var len: socklen_t = 0
         switch accept(s, &addr, &len) {
         case let a where a > 0: // normal good result
-            let clientSocket = Stream(clientSock: a)
-            try clientSocket.nosigpipe()
+            let clientSocket = try Stream(sock: a)
             return clientSocket
         case -1 where errno == 53 && shuttingDown:
             return nil
@@ -249,36 +203,14 @@ public class Stream: StreamProtocol {
     // this release socket function does not throw so it can be used in
     // or after a catch
     public func releaseSock() {
-
         shuttingDown = true
-        
-        // shutdown the socket first
         switch shutdown(s, SHUT_RDWR) {
         case 0, -1 where errno == 57:
             break // shutdown
         default:
             print(PosixError(comment: "shutdown(...) failed").description)
         }
-        // close the file descriptor
-        switch close(s) {
-        case 0: break
-        default:
-            print(PosixError(comment: "close(...) failed").description)
-        }
-        eof = true
-    }
-    
-    
-    private func setRdTimeout(timeout: Double) throws {
-        var tv = timeval(t: timeout)
-        let tvSize = socklen_t(strideof(timeval))
-        
-        switch setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, tvSize) {
-        case 0: break                    // success
-        case -1 where errno == 22: break // bug. If the stream is at EoF, SO_RCVTIMEO will fail.
-        default:
-            throw PosixError(comment: "setsockopt(SO_RCVTIMEO...) failed.")
-        }
+        sockClose()
     }
     
     // reads preserving natural breaks in the stream.
@@ -302,7 +234,6 @@ public class Stream: StreamProtocol {
             fatalError("Should not fall through")
         }
     }
-    
     
     // this function returns the number of bytes specified or truncated
     // if there is an eof. Truncated to 0 bytes is ok.
@@ -330,14 +261,5 @@ public class Stream: StreamProtocol {
             }
         }
         return buffer
-    }
-    
-    private func nosigpipe() throws {
-        // prevents crashes when blocking calls are pending and the app is paused ( via Home button )
-        // or if the socket in unexpectedly closed.
-        var no_sig_pipe: Int32 = 1;
-        guard setsockopt(s, SOL_SOCKET, SO_NOSIGPIPE, &no_sig_pipe, socklen_t(sizeof(Int32))) >= 0 else {
-            throw PosixError(comment: "setsockopt(NoSigPipe...) failed.")
-        }
     }
 }
