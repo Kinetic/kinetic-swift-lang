@@ -21,7 +21,7 @@ protocol StreamProtocol {
     //    Writes data to a connect or accpeted session. Cork is an optional parameter
     //    that defalts to false. cork = true delays the write until the stream is written to
     //    again with cork = false.
-    func writeBytes(inout bytes: Bytes, cork: Bool) throws
+    func writeBytes(bytes: Bytes, cork: Bool) throws
     
     //    Reads data until the size is satisfied, EoF or there is more than timeout
     //    witout reading additional bytes. If timeout is not specified it is "forever".
@@ -142,11 +142,16 @@ public class Stream: Socket, StreamProtocol {
     //     writeBytes(data1, cork: true)
     //     writeBytes(data2)
     //
-    public func writeBytes(inout bytes: Bytes, cork: Bool = false) throws {
+    public func writeBytes(bytes: Bytes, cork: Bool = false) throws {
         if cork {
             try setCork(true)
         }
-        switch write(s, &bytes, bytes.count) {
+//        var dd = NSData(bytesNoCopy: <#T##UnsafeMutablePointer<Void>#>, length: <#T##Int#>)
+        
+//        let foo = Bytes([3,4,5,])
+//        switch write(s, foo, 32) {
+        
+        switch write(s, bytes, bytes.count) {
         case let x where x < 0:
             throw PosixError(comment: "write(...) failed.")
         case bytes.count:

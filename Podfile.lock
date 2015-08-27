@@ -10,7 +10,7 @@ DEPENDENCIES:
   - BrightFutures (from `https://github.com/Thomvis/BrightFutures`)
   - CryptoSwift (from `https://github.com/krzyzanowskim/CryptoSwift`, branch `swift20`)
   - ProtocolBuffers-Swift
-  - Socket
+  - Socket (from `https://github.com/jphughes/socket-swift`)
 
 EXTERNAL SOURCES:
   BrightFutures:
@@ -18,6 +18,8 @@ EXTERNAL SOURCES:
   CryptoSwift:
     :branch: swift20
     :git: https://github.com/krzyzanowskim/CryptoSwift
+  Socket:
+    :git: https://github.com/jphughes/socket-swift
 
 CHECKOUT OPTIONS:
   BrightFutures:
@@ -26,6 +28,9 @@ CHECKOUT OPTIONS:
   CryptoSwift:
     :commit: ad4db3095a9ccc034c1eb65934a89c670012e6a0
     :git: https://github.com/krzyzanowskim/CryptoSwift
+  Socket:
+    :commit: b63d23e3f8dd8353c8d8514fb8e6d859c79dce17
+    :git: https://github.com/jphughes/socket-swift
 
 SPEC CHECKSUMS:
   BrightFutures: 1f99ca607fd2880a606257c57eb3ebd45299443d

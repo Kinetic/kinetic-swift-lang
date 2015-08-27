@@ -9,7 +9,7 @@ import Kinetic
 //: - [_Optional_] and a timeout
 let c = try Kinetic.connect("localhost")
 try Kinetic.connect("localhost", port: 8123) // timeout: `NetworkChannel.DEFAULT_CONNECT_TIMEOUT`
-try Kinetic.connect("localhost", port: 8123, timeout: .In(3)) // 3 seconds
+try Kinetic.connect("localhost", port: 8123, timeout: 3.0) // 3 seconds
 
 //: ### The `KeyType` and `ValueType`
 //: Anything that conforms with `KeyType` can be considered a key on any command.
