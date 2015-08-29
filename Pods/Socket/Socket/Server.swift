@@ -5,7 +5,7 @@ public class Server {
     
     var socket:Stream? = nil
     
-    public init(port p: in_port_t = 0, service:(Stream) -> ()) throws {
+    public init(port p: String = "0", service:(Stream) -> ()) throws {
         socket = try Stream(listenPort: p)
         port = socket!.port
         dispatch_async(dispatch_get_global_queue(0,0)) {

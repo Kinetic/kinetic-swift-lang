@@ -11,9 +11,15 @@ import XCTest
 
 class KineticTests: XCTestCase {
     
+    var c: KineticSession? = nil
+    
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        do {
+            c = try Kinetic.connect("127.0.0.1")
+        } catch let x {
+            XCTFail(String(x))
+        }
     }
     
     override func tearDown() {

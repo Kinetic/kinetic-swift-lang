@@ -4,19 +4,26 @@ public typealias Bytes = [UInt8]
 
 protocol StreamProtocol {
     
-    //    Create a connection witin timeout period to host and port specified.
-    //    the connection will have Nagle and sigPipe turned off. timeout defaults
-    //    to forever (or until the host gives up which is 30 seconds I think)
-    init(connectTo host:String, port: in_port_t, var timeout: Double) throws
+    /*!
+    @abstract Create a connection witin timeout period to host and port specified.
+    the connection will have Nagle and sigPipe turned off. timeout defaults
+    to forever (or until the host gives up which is 30 seconds I think)
+    */
+    init(connectTo host:String, port: String, var timeout: Double) throws
     
-    //    the port number that is being listened to
+    /// @abstract    the port number that is being listened to
     var port:in_port_t { get }
     
     
-    //    Blocks until someone sends a connect to a listening instance. Returns
-    //    the instance unless the accept has been closed down, and
-    //    in that case returns nil
+    /*!
+    @function acceptConnection
+    @abstract Blocks until someone sends a connect to a listening instance. Returns
+        the instance unless the accept has been closed down, and
+        in that case returns nil
+    @return Stream or nil if the listening socket was closed.
+    */
     func acceptConnection() throws -> Stream?
+    
     
     //    Writes data to a connect or accpeted session. Cork is an optional parameter
     //    that defalts to false. cork = true delays the write until the stream is written to
@@ -45,29 +52,11 @@ protocol StreamProtocol {
     
 }
 
+//
 extension sockaddr {
-    
-    // TODO, Fix this hack
-    init(host: String, port: in_port_t) {
-        self.init()
-        var addr = sockaddr_in(
-            sin_len: __uint8_t(sizeof(sockaddr_in)),
-            sin_family: sa_family_t(AF_INET),
-            sin_port: port.bigEndian,
-            sin_addr: in_addr(s_addr: inet_addr(host)),
-            sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
-        let data = NSData(bytes: &addr, length: sizeof(sockaddr_in))
-        data.getBytes(&self, length: sizeof(sockaddr))
-    }
-}
-
-extension sockaddr_in {
-    
-    // TODO, Fix this hack
-    init(var fromSockaddr s: sockaddr) {
-        self.init()
-        let data = NSData(bytes: &s, length: sizeof(sockaddr))
-        data.getBytes(&self, length: sizeof(sockaddr_in))
+    //
+    var toSockaddr_in:sockaddr_in {
+        return unsafeBitCast(self, sockaddr_in.self)
     }
 }
 
@@ -87,7 +76,7 @@ public class Stream: Socket, StreamProtocol {
         
     public private(set) var eof:Bool  = false;
     
-    public required init(connectTo host:String, port: in_port_t, timeout: Double) throws {
+    public required init(connectTo host:String, port: String, timeout: Double) throws {
         try super.init(sock: socket(AF_INET,SOCK_STREAM,0))
         
         // disable Nagle
@@ -103,14 +92,14 @@ public class Stream: Socket, StreamProtocol {
         }
         
         // do the connection
-        var sockAddr = sockaddr(host: host, port: port)
+        var sockAddr = try getSockAddr(host, port: port, sockType: SOCK_STREAM)
         guard connect(s, &sockAddr, socklen_t(sockAddr.sa_len)) != -1 else {
             throw PosixError(comment: "connect(...) failed.")
         }
     }
     
     
-    public required init(listenPort: in_port_t = 0) throws {
+    public required init(listenPort: String = "0") throws {
         try super.init(sock: socket(AF_INET, SOCK_STREAM, 0))
         guard ( s != -1 ) else {
             throw PosixError(comment: "socket(....) failed")
@@ -122,7 +111,7 @@ public class Stream: Socket, StreamProtocol {
             throw PosixError(comment: "setsockopt(...) failed.")
         }
         
-        var sock_addr = sockaddr(host: "0.0.0.0", port: listenPort)
+        var sock_addr = try getSockAddr("0.0.0.0", port: listenPort, sockType: SOCK_STREAM)
         
         guard ( bind(s, &sock_addr, socklen_t(strideof(sockaddr_in))) != -1 ) else {
             throw PosixError(comment: "bind(...) failed.")
@@ -146,10 +135,6 @@ public class Stream: Socket, StreamProtocol {
         if cork {
             try setCork(true)
         }
-//        var dd = NSData(bytesNoCopy: <#T##UnsafeMutablePointer<Void>#>, length: <#T##Int#>)
-        
-//        let foo = Bytes([3,4,5,])
-//        switch write(s, foo, 32) {
         
         switch write(s, bytes, bytes.count) {
         case let x where x < 0:

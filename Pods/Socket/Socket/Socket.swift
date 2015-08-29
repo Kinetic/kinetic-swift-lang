@@ -8,6 +8,34 @@
 
 import Foundation
 
+func getSockAddr(host: String = "0.0.0.0", port: String = "0", sockType: Int32) throws -> sockaddr {
+    var hint = addrinfo()
+    hint.ai_socktype = sockType
+    hint.ai_family = AF_INET
+    
+    var resPtr = UnsafeMutablePointer<addrinfo>.alloc(1)
+    switch getaddrinfo(
+        host.cStringUsingEncoding(NSUTF8StringEncoding)!,
+        port.cStringUsingEncoding(NSUTF8StringEncoding)!,
+        &hint, &resPtr) {
+    case 0:
+        break
+    case let x:
+        let ss:NSObject = "description"
+        let tt:AnyObject = NSString(UTF8String: gai_strerror(x))!
+        let y:[NSObject:AnyObject] = [ss:tt]
+        throw NSError(domain: "GAI Error", code: Int(x), userInfo: y)
+    }
+    
+    let res:addrinfo = resPtr.memory
+    let sa:sockaddr = res.ai_addr.memory
+    freeaddrinfo(resPtr)
+    return sa
+}
+
+
+
+
 public class Socket {
     
     var s:Int32
@@ -36,7 +64,7 @@ public class Socket {
         guard getsockname(s, &sa, &salen) == 0 else {
             throw PosixError(comment: "Datagram getsockname(...)")
         }
-        let sin = sockaddr_in(fromSockaddr: sa)
+        let sin = sa.toSockaddr_in
         guard sin.sin_family == sa_family_t(AF_INET) else {
             throw PosixError(comment: "wrong networking family")
         }
