@@ -22,6 +22,16 @@
 
 public struct KineticEncoding {
     
+    public enum Error: ErrorType {
+
+        // normal case when the connection is closed. (eof on the identifier)
+        case Closed
+        // An EoF happened while reading the remainder of the header.
+        case InvalidStream
+        // there was 9 bytes, but the identifier was not correct. Stream out of sync.
+        case InvalidIdentifier
+    }
+    
     public struct Header {
         public let bytes: Bytes
         
@@ -35,8 +45,19 @@ public struct KineticEncoding {
             return Int(bytesToUInt32(self.bytes, offset: 5))
         }
         
-        public init(bytes: Bytes) {
+        public init(bytes: Bytes) throws {
+            switch bytes.count {
+            case 9:
+                break
+            case 0:
+                throw Error.Closed
+            default:
+                throw Error.InvalidStream
+            }
             self.bytes = bytes
+            guard isValid else {
+                throw Error.InvalidIdentifier
+            }
         }
         
         public init(protoLength: Int, valueLength: Int) {

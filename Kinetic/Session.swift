@@ -92,10 +92,9 @@ public class KineticSession {
         
         // Reader
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
-            debugPrint("Background reader for \(self.connectionId!) is active.")
             while self.connected {
                 do {
-                    debugPrint("waiting...")
+                    debugPrint("waiting for \(self.connectionId!) ...")
                     let raw = try self.channel.receive()
                     debugPrint("Background loops seems to work... Ack:\(raw.command.header.ackSequence)")
                     if let x = self.pending[raw.command.header.ackSequence] {

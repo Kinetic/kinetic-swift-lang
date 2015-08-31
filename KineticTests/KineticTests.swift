@@ -23,13 +23,27 @@ class KineticTests: XCTestCase {
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        c!.close()
+        XCTAssertFalse(c!.connected)
         super.tearDown()
     }
     
     func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        do {
+        
+            //: Write a key/value pair
+            try c!.put("hello", value: "world")
+            
+            //: Read the value back
+            let x = try c!.get("hello")
+            
+            //: The Strings on the methods are just for convenience
+            //: the actual values are byte arrays `[UInt8]`
+            print("Received: \(x.value!.toUtf8String())")
+
+        }catch let x {
+            XCTFail(String(x))
+        }
     }
     
     func testPerformanceExample() {

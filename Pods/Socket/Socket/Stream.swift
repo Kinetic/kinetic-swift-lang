@@ -132,21 +132,17 @@ public class Stream: Socket, StreamProtocol {
     //     writeBytes(data2)
     //
     public func writeBytes(bytes: Bytes, cork: Bool = false) throws {
-        if cork {
-            try setCork(true)
-        }
+        try setCork(cork)
         
         switch write(s, bytes, bytes.count) {
         case let x where x < 0:
             throw PosixError(comment: "write(...) failed.")
         case bytes.count:
-            return // happy
+            break
         case let x:     // x > 0 then
             fatalError("partial write len \(x) should have been \(bytes.count)")
         }
-        if !cork {
-            try setCork(false)
-        }
+        return // happy
     }
     
     func setCork(b:Bool) throws {
