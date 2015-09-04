@@ -104,6 +104,8 @@ public class KineticSession {
                         debugPrint("Oops: Unsolicited or unexpected ACK :/")
                         debugPrint(raw.command)
                     }
+                } catch KineticEncoding.Error.Closed {
+                    break
                 } catch let err {
                     self.error = err
                     self.close()

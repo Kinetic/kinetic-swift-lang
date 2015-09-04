@@ -39,8 +39,6 @@ public class KineticDiscovery {
     
     private var discoverStopping = false
     private var s:Datagram? = nil
-    
-    var done = dispatch_semaphore_create(0)
 
     
     init (multicast mAddr:String = "239.1.2.3", port mPort:String = "8123", timeout:Double = 0, f:(AnyObject)->()) throws {
@@ -49,12 +47,10 @@ public class KineticDiscovery {
         
         discoverRunning = true
         
-        
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             do {
                 defer {
                     self.discoverRunning = false
-                    dispatch_semaphore_signal(self.done)
                 }
     
                 while true {
@@ -70,7 +66,6 @@ public class KineticDiscovery {
                 
             } catch let x {
                 self.error = x
-                print(String(x))
             }
         }
         

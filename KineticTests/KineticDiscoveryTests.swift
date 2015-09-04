@@ -40,15 +40,16 @@ class KineticDiscoveryTests: XCTestCase {
     }
     
     func testPrintAllWWN() {
+        let wwn:String = KineticDiscovery.jroot.world_wide_name.rawValue
         var WWNs = Set<String>()
         do {
             let s = try KineticDiscovery() { j in
-                WWNs.insert(j["world_wide_name"]!! as! String)
+                WWNs.insert(j[wwn]!! as! String)
             }
             delay(6)
             s.stop()
             print(WWNs)
-            XCTAssertGreaterThan(WWNs.count, 0) 
+            XCTAssertGreaterThan(WWNs.count, 0)
         } catch let x {
             XCTFail(String(x))
         }

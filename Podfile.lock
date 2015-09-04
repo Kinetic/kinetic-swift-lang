@@ -29,7 +29,7 @@ CHECKOUT OPTIONS:
     :commit: ad4db3095a9ccc034c1eb65934a89c670012e6a0
     :git: https://github.com/krzyzanowskim/CryptoSwift
   Socket:
-    :commit: e747f958de049373dc21e9c87f26b5d5cd4f76ef
+    :commit: 1b78a7937377b8d21e6a20f7d80e04adfda46b6d
     :git: https://github.com/jphughes/socket-swift
 
 SPEC CHECKSUMS:

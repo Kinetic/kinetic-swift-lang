@@ -41,6 +41,7 @@ public class Socket {
     var s:Int32
     
     public private(set) var port:in_port_t  = 0;
+    public private(set) var closing:Bool = false
 
     
     // Used only by the accept to create a new socket.
@@ -85,6 +86,7 @@ public class Socket {
 
     public func sockClose() {
         // close the file descriptor
+        closing = true
         if close(s) != 0 {
             print(PosixError(comment: "close(...) failed").description)
         }

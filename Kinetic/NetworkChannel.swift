@@ -48,7 +48,9 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel {
     // KineticChannel
     weak public private(set) var session: KineticSession? = nil
     public var connected: Bool {
-        return !stream!.eof
+        if stream!.eof     {return false}
+        if stream!.closing {return false}
+        return true
     }
     
     internal init(host:String, port:Int, timeout: Double = NetworkChannel.DEFAULT_CONNECT_TIMEOUT) throws {

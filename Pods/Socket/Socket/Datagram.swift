@@ -32,6 +32,7 @@ public class Datagram: Socket {
     
     public enum Error:ErrorType {
         case timeout
+        case closed
     }
     
     public init(port p:String = "0") throws {
@@ -80,6 +81,8 @@ public class Datagram: Socket {
         switch recvfrom(s, &message, message.count, 0, &sa, &salen) {
         case let x where x < 0 && errno == 35:
             throw Error.timeout
+        case let x where x < 0 && closing:
+            throw Error.closed
         case let x where x < 0:
             throw PosixError(comment: "Datagram read(...)")
         case let x:
