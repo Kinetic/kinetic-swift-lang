@@ -61,7 +61,7 @@ public class Datagram: Socket {
         }
     }
     
-    func send (var sa: sockaddr, var message:Bytes) throws {
+    public func send (var sa: sockaddr, var message:Bytes) throws {
         switch sendto(s, &message, message.count, 0, &sa, socklen_t(strideof(sockaddr))) {
         case let x where x < 0:
             throw PosixError(comment: "write(...) failed.")
@@ -72,7 +72,7 @@ public class Datagram: Socket {
         }
     }
     
-    func recv (length: Int, timeout:Double = 0) throws -> (host:String, port:in_port_t, message:Bytes) {
+    public func recv (length: Int, timeout:Double = 0) throws -> (host:String, port:in_port_t, message:Bytes) {
         try setRdTimeout(timeout)
         var message = Bytes(count: 65535, repeatedValue: 0)
         var sa = sockaddr()

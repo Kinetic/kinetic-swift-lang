@@ -8,6 +8,8 @@
 
 import XCTest
 @testable import Kinetic
+import BrightFutures
+
 
 class KineticTests: XCTestCase {
     
@@ -17,9 +19,14 @@ class KineticTests: XCTestCase {
         super.setUp()
         do {
             c = try Kinetic.connect("127.0.0.1")
+            print("Open Successful, \(c!.connectionId!)")
         } catch let x {
-            XCTFail(String(x))
+            fatalError(String(x)) // don't continue on failure. None of the tests will work.
         }
+    }
+    
+    func delay(x: Double) {
+        NSThread.sleepForTimeInterval(x)
     }
     
     override func tearDown() {
@@ -45,12 +52,4 @@ class KineticTests: XCTestCase {
             XCTFail(String(x))
         }
     }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
 }

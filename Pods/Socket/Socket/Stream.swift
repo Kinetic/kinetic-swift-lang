@@ -190,6 +190,7 @@ public class Stream: Socket, StreamProtocol {
     // or after a catch
     public func releaseSock() {
         shuttingDown = true
+        eof = true
         switch shutdown(s, SHUT_RDWR) {
         case 0, -1 where errno == 57:
             break // shutdown

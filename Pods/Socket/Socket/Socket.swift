@@ -83,7 +83,7 @@ public class Socket {
         }
     }
 
-    func sockClose() {
+    public func sockClose() {
         // close the file descriptor
         if close(s) != 0 {
             print(PosixError(comment: "close(...) failed").description)
