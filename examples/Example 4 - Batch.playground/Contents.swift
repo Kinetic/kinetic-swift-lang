@@ -11,4 +11,4 @@ try c.swap("a","b")
 try c.get("a").value!.toUtf8String()
 try c.get("b").value!.toUtf8String()
 
-
+c.close()

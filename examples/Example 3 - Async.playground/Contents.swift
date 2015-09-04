@@ -21,6 +21,7 @@ future
 
 //: You can also force the value
 future.forced(1.0)
+c.close()
 
 //: Allow the background threads to do their work
 XCPSetExecutionShouldContinueIndefinitely()
