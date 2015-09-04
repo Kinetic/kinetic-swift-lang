@@ -26,6 +26,10 @@
 		3EFB7F2B1B7B963800988886 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F2A1B7B963800988886 /* Channel.swift */; };
 		3EFB7F2D1B7BAF8D00988886 /* NetworkChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F2C1B7BAF8D00988886 /* NetworkChannel.swift */; };
 		3EFB7F2F1B7BB4E700988886 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFB7F2E1B7BB4E700988886 /* Authentication.swift */; };
+		7A53ED3B1B99E85B00558A3D /* Discovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A53ED3A1B99E85B00558A3D /* Discovery.swift */; };
+		7A53ED3C1B99E85B00558A3D /* Discovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A53ED3A1B99E85B00558A3D /* Discovery.swift */; };
+		7A53ED3D1B99E85B00558A3D /* Discovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A53ED3A1B99E85B00558A3D /* Discovery.swift */; };
+		7A53ED3F1B9A1C1900558A3D /* KineticDiscoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A53ED3E1B9A1C1900558A3D /* KineticDiscoveryTests.swift */; };
 		7ACC0F461B97D218005BD8BE /* Kinetic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EDAAB3D1B66D32D00F30808 /* Kinetic.framework */; };
 		7ACC0F4D1B97D264005BD8BE /* KineticTestMulticast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ACC0F4C1B97D264005BD8BE /* KineticTestMulticast.swift */; };
 		921636AE408C3549DE7A1141 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 382D1C00FC0EC4F1BF676411 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -76,6 +80,8 @@
 		3EFB7F2A1B7B963800988886 /* Channel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
 		3EFB7F2C1B7BAF8D00988886 /* NetworkChannel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkChannel.swift; sourceTree = "<group>"; };
 		3EFB7F2E1B7BB4E700988886 /* Authentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
+		7A53ED3A1B99E85B00558A3D /* Discovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Discovery.swift; sourceTree = "<group>"; };
+		7A53ED3E1B9A1C1900558A3D /* KineticDiscoveryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KineticDiscoveryTests.swift; sourceTree = "<group>"; };
 		7ACC0F411B97D218005BD8BE /* KineticTestsMulticast.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KineticTestsMulticast.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7ACC0F4C1B97D264005BD8BE /* KineticTestMulticast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KineticTestMulticast.swift; sourceTree = "<group>"; };
 		80777030020DBD5A301CA196 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -152,6 +158,7 @@
 				3EFB7F2C1B7BAF8D00988886 /* NetworkChannel.swift */,
 				3EFB7F2E1B7BB4E700988886 /* Authentication.swift */,
 				3EDAAB571B66D47200F30808 /* Session.swift */,
+				7A53ED3A1B99E85B00558A3D /* Discovery.swift */,
 				3EFB7F231B7A951000988886 /* Commands */,
 				3EDAAB401B66D32D00F30808 /* Kinetic.h */,
 				3EDAAB421B66D32D00F30808 /* Info.plist */,
@@ -164,6 +171,7 @@
 			children = (
 				3EDAAB4C1B66D32D00F30808 /* KineticTests.swift */,
 				7ACC0F4C1B97D264005BD8BE /* KineticTestMulticast.swift */,
+				7A53ED3E1B9A1C1900558A3D /* KineticDiscoveryTests.swift */,
 				3EDAAB4E1B66D32D00F30808 /* Info.plist */,
 			);
 			path = KineticTests;
@@ -381,6 +389,7 @@
 				3EFB7F1E1B7A6A9800988886 /* Put.swift in Sources */,
 				3ED681EB1B7CEA0600AFDF79 /* Encoding.swift in Sources */,
 				3EFB7F291B7AB06800988886 /* Delete.swift in Sources */,
+				7A53ED3B1B99E85B00558A3D /* Discovery.swift in Sources */,
 				3EFB7F2D1B7BAF8D00988886 /* NetworkChannel.swift in Sources */,
 				3EDAAB581B66D47200F30808 /* Session.swift in Sources */,
 				3EDB8E8A1B871C5C00503F9A /* Batch.swift in Sources */,
@@ -398,6 +407,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A53ED3F1B9A1C1900558A3D /* KineticDiscoveryTests.swift in Sources */,
+				7A53ED3C1B99E85B00558A3D /* Discovery.swift in Sources */,
 				7ACC0F4D1B97D264005BD8BE /* KineticTestMulticast.swift in Sources */,
 				3EDAAB4D1B66D32D00F30808 /* KineticTests.swift in Sources */,
 			);
@@ -407,6 +418,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A53ED3D1B99E85B00558A3D /* Discovery.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,18 +594,21 @@
 		7ACC0F491B97D218005BD8BE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = KineticTestsMulticast/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.DeeHughes.KineticTestsMulticast;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		7ACC0F4A1B97D218005BD8BE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = KineticTestsMulticast/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
@@ -640,6 +655,7 @@
 				7ACC0F4A1B97D218005BD8BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

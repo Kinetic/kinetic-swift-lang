@@ -30,7 +30,7 @@ import Foundation
 
 public class Datagram: Socket {
     
-    enum Error:ErrorType {
+    public enum Error:ErrorType {
         case timeout
     }
     
