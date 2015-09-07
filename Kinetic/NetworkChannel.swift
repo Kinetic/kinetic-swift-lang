@@ -18,17 +18,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// @author: Ignacio Corderi :-P
-
-
-
-public let connect = NetworkChannel.connect
-public func connect(host: String, port: Int = NetworkChannel.DEFAULT_PORT, timeout: Double = NetworkChannel.DEFAULT_CONNECT_TIMEOUT) throws ->  KineticSession {
-    return try NetworkChannel.connect(host, port: port, timeout: timeout)
-}
+// @author: Ignacio Corderi
 
 import Socket
 
+public let connect = NetworkChannel.connect
+public func connect(host: String, port: Int = NetworkChannel.DEFAULT_PORT,
+                    timeout: Double = NetworkChannel.DEFAULT_CONNECT_TIMEOUT) throws ->  KineticSession {
+    return try NetworkChannel.connect(host, port: port, timeout: timeout)
+}
 
 public class NetworkChannel: CustomStringConvertible, KineticChannel {
 
@@ -48,15 +46,15 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel {
     // KineticChannel
     weak public private(set) var session: KineticSession? = nil
     public var connected: Bool {
-        if stream!.eof     {return false}
-        if stream!.closing {return false}
+        if self.stream!.eof     {return false}
+        if self.stream!.closing {return false}
         return true
     }
     
     internal init(host:String, port:Int, timeout: Double = NetworkChannel.DEFAULT_CONNECT_TIMEOUT) throws {
         self.port = port
         self.host = host
-        stream = try Stream(connectTo: host, port: String(port), timeout: timeout)
+        self.stream = try Stream(connectTo: host, port: String(port), timeout: timeout)
     }
     
     public static func connect(host: String, port: Int, timeout: Double = NetworkChannel.DEFAULT_CONNECT_TIMEOUT) throws -> KineticSession {
@@ -73,7 +71,7 @@ public class NetworkChannel: CustomStringConvertible, KineticChannel {
     }
     
     public func close() {
-        stream!.releaseSock()
+        self.stream!.releaseSock()
     }
     
     public func send(builder: Builder) throws {

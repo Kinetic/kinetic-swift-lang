@@ -1,14 +1,26 @@
-//
-//  Discovery.swift
-//  Kinetic
-//
-//  Created by James Hughes on 9/4/15.
-//  Copyright © 2015 Seagate. All rights reserved.
-//
+// Copyright (c) 2015 Seagate Technology
 
-import Foundation
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+// @author: James Hughes
+
 import Socket
-
 
 public class KineticDiscovery {
     
@@ -31,32 +43,28 @@ public class KineticDiscovery {
         case name = "name"
     }
     
-
-    
-    
-    public private(set) var discoverRunning: Bool = false
+    public private(set) var active: Bool
     public private(set) var error:ErrorType? = nil
     
-    private var discoverStopping = false
-    private var s:Datagram? = nil
-
+    private var stopping: Bool
+    private var socket: Datagram?
     
     init (multicast mAddr:String = "239.1.2.3", port mPort:String = "8123", timeout:Double = 0, f:(AnyObject)->()) throws {
         
-        s = try Datagram(multicast: mAddr, port: mPort)
-        
-        discoverRunning = true
+        self.active = true
+        self.stopping = false
+        self.socket = try Datagram(multicast: mAddr, port: mPort)
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) {
             do {
                 defer {
-                    self.discoverRunning = false
+                    self.active = false
                 }
     
                 while true {
                     // recieve it on the multicast socket
-                    var (_, _, bytes) = try self.s!.recv(65535, timeout:timeout) // assumes you have access to
-                    if self.discoverStopping {
+                    var (_, _, bytes) = try self.socket!.recv(65535, timeout:timeout) // assumes you have access to
+                    if self.stopping {
                         return
                     }
                     let data = NSData(bytesNoCopy: &bytes, length: bytes.count, freeWhenDone:false)
@@ -68,11 +76,10 @@ public class KineticDiscovery {
                 self.error = x
             }
         }
-        
     }
     
     public func stop() {
-        discoverStopping = true
-        s!.sockClose()
+        self.active = true
+        self.socket!.sockClose()
     }
 }
